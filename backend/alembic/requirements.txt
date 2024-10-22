@@ -1,0 +1,8 @@
+alembic==1.13.1
+asyncpg==0.29.0
+Mako==1.3.3
+MarkupSafe==2.1.5
+python-dotenv==1.0.1
+SQLAlchemy==2.0.29
+sqlalchemy2-stubs==0.0.2a37
+black==24.4.2
