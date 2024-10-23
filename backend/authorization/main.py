@@ -7,7 +7,7 @@ from fastapi.openapi.docs import get_swagger_ui_html
 
 from api.auth.routers import router as api_auth_router
 
-from config import ORIGINS
+from config import ORIGINS, MEDIA_FOLDER
 from database import db_session
 
 
@@ -38,7 +38,7 @@ app.add_middleware(
 
 app.include_router(api_auth_router)
 
-app.mount("/media", StaticFiles(directory="media/", check_dir=True))
+app.mount("/media", StaticFiles(directory=MEDIA_FOLDER, check_dir=True))
 
 
 if __name__ == "__main__":
