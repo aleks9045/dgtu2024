@@ -6,6 +6,3 @@ __pycache__/
 venv/
 .env
 .env_prod
-
-!versions/
-versions/*
