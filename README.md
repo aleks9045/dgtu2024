@@ -68,11 +68,12 @@ python -m venv venv
 python main.py
 ```
 
-## Launch in docker
+## Launch in docker(requred: docker v25 or higher and docker-compose v2.29.6 or higher)
 
 ```
 docker-compose up --build
 ```
+
 
 ## Used technologies
 
