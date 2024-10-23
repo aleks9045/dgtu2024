@@ -8,3 +8,4 @@ venv/
 .env_prod
 
 !versions/
+versions/*
