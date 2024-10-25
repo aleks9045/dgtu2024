@@ -55,7 +55,7 @@ class UserInsertQuery(BaseQuery):
         result = await session.execute(insert(BaseUserModel).returning(BaseUserModel.id_bu), bu_data)
         id_bu = result.scalars().one()
         u_data = await cls.make_one_dict_from_schema(model, schema)
-        u_data['baseuser'] = id_bu
+        u_data['base_user'] = id_bu
 
         await session.execute(insert(model), u_data)
 

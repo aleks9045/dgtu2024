@@ -26,11 +26,11 @@ class BaseUserModel(Base):
 class UserModel(Base):
     __tablename__ = "user"
     id_u: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
-    about: Mapped[str] = Column(VARCHAR(255), nullable=True)
+    points: Mapped[int] = Column(Integer, default=0)
     base_user: Mapped[int] = Column(Integer, ForeignKey('base_user.id_bu', ondelete="CASCADE"), unique=True,
                                     nullable=False)
 
-    public_columns = (id_u, about)
+    public_columns = (id_u, points)
 
 
 class AdminModel(Base):
