@@ -7,7 +7,6 @@ from pydantic import BaseModel, EmailStr, Field
 class UserCreateSchema(BaseModel):
     name: str = Field(title="user's name", max_length=32)
     surname: str = Field(title="user's surname", max_length=32)
-    patronymic: str = Field(title="user's patronymic", max_length=32)
     email: EmailStr = Field(title="user's email", max_length=64)
     password: str = Field(title="user's password", max_length=64)
 

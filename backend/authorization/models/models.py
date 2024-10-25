@@ -18,7 +18,7 @@ class BaseUserModel(Base):
     email: Mapped[str] = Column(VARCHAR(64), nullable=False, unique=True)
     password: Mapped[str] = Column(VARCHAR(1024), nullable=False)
     photo: Mapped[str] = Column(VARCHAR(255), nullable=True)
-    created: Mapped[datetime] = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     public_columns = (name, surname, email, photo)
 
