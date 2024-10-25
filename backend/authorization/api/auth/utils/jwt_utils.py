@@ -24,7 +24,7 @@ class Password:
 
 class Token:
     def __init__(self,
-                 access_time: int = 60,  # 15 minutes
+                 access_time: int = 1,  # 15 minutes
                  refresh_time: int = 60 * 24 * 7 * 2,  # 14 days
                  algorithm: str = JWT_ALGORITHM):
         self.ACCESS_TOKEN_EXPIRE_MINUTES = access_time
