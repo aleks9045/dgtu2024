@@ -17,10 +17,11 @@ async def initialize_database_data():
                 """
                 INSERT INTO level (id_l, required_points) VALUES
                 (1, 0),
-                (2, 100),
-                (3, 250),
-                (4, 500),
-                (5, 1000);
+                (2, 50),
+                (3, 200),
+                (4, 400),
+                (5, 750),
+                (6, 1000);
                 """
             ))
         admin = await session.execute(select(AdminModel))
@@ -29,7 +30,7 @@ async def initialize_database_data():
             await session.execute(text(
                 f"""
                 INSERT INTO base_user (uu_id, name, surname, email, password, created_at) VALUES
-                ('{str(uuid.uuid1())}', 'Админ', 'Админов', 'aleksey9045@gmail.com', '$2b$12$e3EPmbtAzRX6eEipyvTxaeBdyHE0MoATu8RJnymFrYY2Luh2cQPi6', {func.now()})
+                ('{str(uuid.uuid1())}', 'Админ', 'Админов', 'aleksey9045@gmail.com', '$2b$12$e3EPmbtAzRX6eEipyvTxaeBdyHE0MoATu8RJnymFrYY2Luh2cQPi6', {func.now()});
                 """
             ))
             await session.execute(text(
