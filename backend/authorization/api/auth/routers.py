@@ -58,7 +58,7 @@ async def create_new_tokens(schema: UserLoginSchema,
         raise HTTPException(status_code=400, detail="Неверно введена почта или пароль.")
     return JSONResponse(status_code=201, content={
         "access": token.create(result[0], type_="access"),
-        "refresh": token.create(result[1], type_="refresh")
+        "refresh": token.create(result[0], type_="refresh")
     })
 
 
