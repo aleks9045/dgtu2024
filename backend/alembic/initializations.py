@@ -21,7 +21,6 @@ async def initialize_database_data():
                 (5, 1000);
                 """
             ))
-            await
             await session.commit()
 
 asyncio.run(initialize_database_data())
