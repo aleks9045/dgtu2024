@@ -13,7 +13,7 @@ class Checker:
     def __init__(self, model: BaseModel):
         self.model = model
 
-    async def __call__(self, data: str = Union[Form(...), None]):
+    async def __call__(self, data: str = Form(...)):
         try:
             if data is not None:
                 return self.model.model_validate_json(data)
