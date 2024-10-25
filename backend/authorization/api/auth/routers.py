@@ -64,6 +64,7 @@ async def create_new_tokens(schema: UserLoginSchema,
 
 @router.get('/refresh', summary="Update access and refresh tokens")
 async def get_new_tokens(payload: dict = Depends(existing_user)) -> JSONResponse:
+    print("KOKOKOOKOKO")
     return JSONResponse(status_code=200, content={
         "access": token.create(payload["sub"], type_="access"),
         "refresh": token.create(payload["sub"], type_="refresh")

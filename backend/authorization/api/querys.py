@@ -84,6 +84,7 @@ class SelectQuery(BaseQuery):
 
     @classmethod
     async def exists(cls, columns: Base, condition: bool, session: AsyncSession) -> bool:
+        print("EXISTSTSSSS")
         result = await session.execute(select(columns).where(condition))
 
         if not result.scalars().all():  # if result is empty
