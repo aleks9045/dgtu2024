@@ -8,7 +8,6 @@ from database import db_session
 
 Base = db_session.base
 
-
 class BaseQuery:
     @classmethod
     def get_columns_names(cls, model: Base) -> list[str]:
@@ -84,7 +83,6 @@ class SelectQuery(BaseQuery):
 
     @classmethod
     async def exists(cls, columns: Base, condition: bool, session: AsyncSession) -> bool:
-        print("EXISTSTSSSS")
         result = await session.execute(select(columns).where(condition))
 
         if not result.scalars().all():  # if result is empty

@@ -8,7 +8,7 @@ from api.auth.schemas import UserLoginSchema, UserPatchSchema, UserCreateSchema
 from api.auth.utils.jwt_utils import password, token
 from api.auth.utils.router_utils import Checker, SchemaUtils, Files
 from api.auth.utils.userquerys import UserSelectQuery, UserInsertQuery, UserUpdateQuery, UserDeleteQuery
-from api.querys import SelectQuery
+from querys import SelectQuery
 from config import MEDIA_FOLDER
 from database import db_session
 from models import BaseUserModel, UserModel, AdminModel
@@ -21,8 +21,6 @@ router = APIRouter(
 
 async def existing_user(payload: dict = Depends(token.check),
                         session: AsyncSession = Depends(db_session.get_async_session)):
-    print("CHECK EXISTING USER")
-    print(payload["sub"])
     if not await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
         raise HTTPException(status_code=404, detail="User not found")
     return payload
@@ -64,7 +62,6 @@ async def create_new_tokens(schema: UserLoginSchema,
 
 @router.get('/refresh', summary="Update access and refresh tokens")
 async def get_new_tokens(payload: dict = Depends(existing_user)) -> JSONResponse:
-    print("KOKOKOOKOKO")
     return JSONResponse(status_code=200, content={
         "access": token.create(payload["sub"], type_="access"),
         "refresh": token.create(payload["sub"], type_="refresh")
@@ -104,11 +101,11 @@ async def delete_user(payload: dict = Depends(existing_user),
 async def delete_photo(payload: dict = Depends(existing_user),
                        photo: UploadFile = File(...),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
+    file_path = 'media/user_photos/{photo.filename}'
     await Files.load(file_path, photo)
 
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
-        photo=f'{MEDIA_FOLDER}/user_photos/{file_path}'))
+        photo='media/user_photos/{file_path}'))
 
     return Response(status_code=200)
 
@@ -116,12 +113,12 @@ async def delete_photo(payload: dict = Depends(existing_user),
 async def delete_photo(payload: dict = Depends(existing_user),
                        photo: UploadFile = File(...),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
+    file_path = 'media/user_photos/{photo.filename}'
     await UserDeleteQuery.delete_photo(payload, session)
     await Files.load(file_path, photo)
 
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
-        photo=f'{MEDIA_FOLDER}/user_photos/{file_path}'))
+        photo='media/user_photos/{file_path}'))
 
     return Response(status_code=200)
 
@@ -131,7 +128,7 @@ async def delete_photo(payload: dict = Depends(existing_user),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     await UserDeleteQuery.delete_photo(payload, session)
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
-        photo=f'{MEDIA_FOLDER}/user_photos/default.png'))
+        photo='media/user_photos/default.png'))
 
     return Response(status_code=200)
 

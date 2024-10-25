@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.auth.utils.jwt_utils import password
 from api.auth.utils.router_utils import Files
-from api.querys import SelectQuery, BaseQuery, DeleteQuery
 from config import MEDIA_FOLDER
-from database import db_session
 from models import BaseUserModel, AdminModel, UserModel
+from database import db_session
+from querys import SelectQuery, BaseQuery, DeleteQuery
 
 Base = db_session.base
 

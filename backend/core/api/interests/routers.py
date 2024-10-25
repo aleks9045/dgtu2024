@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 from starlette.responses import Response
 
+
 router = APIRouter(
     prefix="/interests",
     tags=["Interests"]

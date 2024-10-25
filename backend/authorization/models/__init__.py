@@ -2,17 +2,10 @@ __all__ = (
     'BaseUserModel',
     'UserModel',
     'AdminModel',
-    'Base',
-    'InterestsModel',
-    'UserInterestsModel',
-    'LocalAchievements',
-    'LevelModel'
+    'Base'
 )
 
 from .models import BaseUserModel, \
     UserModel, \
     AdminModel, \
-    Base, InterestsModel, \
-    UserInterestsModel, \
-    LocalAchievements, \
-    LevelModel
+    Base
