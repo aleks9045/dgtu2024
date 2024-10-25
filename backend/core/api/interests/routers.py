@@ -3,6 +3,7 @@ from fastapi import Depends
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
+from starlette.responses import Response
 
 router = APIRouter(
     prefix="/interests",
@@ -13,17 +14,17 @@ router = APIRouter(
 async def verify_token(token: str):
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            "http://authorization/token_check",
+            "http://localhost:8000/auth/token_check",
             headers={"Authorization": f"Bearer {token}"}
         )
         if response.status_code != 200:
             raise HTTPException(status_code=401, detail="Invalid token")
 
 
-@router.get('/interests', summary="Get information about user")
-async def get_interests(token: str = Depends(verify_token)) -> JSONResponse:
-    print("checkckckckck")
-    return JSONResponse(status_code=200)
+@router.get('/', summary="Get information about user")
+async def get_interests(token: str = Depends(verify_token)) -> Response:
+
+    return Response(status_code=200)
 
 # @router.patch('/user', summary="Change user's information")
 # async def patch_user(schema: UserPatchSchema,

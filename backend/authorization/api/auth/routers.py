@@ -21,6 +21,7 @@ router = APIRouter(
 
 async def existing_user(payload: dict = Depends(token.check),
                         session: AsyncSession = Depends(db_session.get_async_session)):
+
     if not await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
         raise HTTPException(status_code=404, detail="User not found")
     return payload
@@ -29,19 +30,10 @@ async def existing_user(payload: dict = Depends(token.check),
 @router.post('/register', summary="Create new user",
              description=f"data field: \n\n```\n\n {SchemaUtils.generate_example(UserCreateSchema)} \n\n```")
 async def create_user(schema: UserCreateSchema = Depends(Checker(UserCreateSchema)),
-                      photo: UploadFile = File(None),
                       session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    if not await SelectQuery.exists(BaseUserModel, BaseUserModel.email == schema["email"], session):
+    if await SelectQuery.exists(BaseUserModel, BaseUserModel.email == schema["email"], session):
         raise HTTPException(status_code=400, detail="Пользователь уже существует.")
-
-    if photo is not None:
-        file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
-        await Files.load(file_path, photo)
-        schema["photo"] = file_path
-    else:
-        file_path = f'{MEDIA_FOLDER}/user_photos/default.png'
-        schema["photo"] = file_path
 
     if schema["is_user"]:
         await UserInsertQuery.insert(UserModel, schema, session)
@@ -70,8 +62,7 @@ async def create_new_tokens(schema: UserLoginSchema,
 
 
 @router.get('/refresh', summary="Update access and refresh tokens")
-async def get_new_tokens(payload: dict = Depends(existing_user),
-                         session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+async def get_new_tokens(payload: dict = Depends(existing_user)) -> JSONResponse:
     return JSONResponse(status_code=200, content={
         "access": token.create(payload["sub"], type_="access"),
         "refresh": token.create(payload["sub"], type_="refresh")
@@ -106,6 +97,18 @@ async def delete_user(payload: dict = Depends(existing_user),
     await UserDeleteQuery.delete_user(payload, session)
     return Response(status_code=200)
 
+
+@router.post('/photo', summary="Upload user's photo")
+async def delete_photo(payload: dict = Depends(existing_user),
+                       photo: UploadFile = File(...),
+                       session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+    file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
+    await Files.load(file_path, photo)
+
+    await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
+        photo=f'{MEDIA_FOLDER}/user_photos/{file_path}'))
+
+    return Response(status_code=200)
 
 @router.patch('/photo', summary="Patch user's photo")
 async def delete_photo(payload: dict = Depends(existing_user),

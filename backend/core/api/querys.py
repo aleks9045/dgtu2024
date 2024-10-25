@@ -49,7 +49,7 @@ class SelectQuery(BaseQuery):
 
     @classmethod
     async def select(cls, columns: Base, condition: bool,
-                         session: AsyncSession) -> Dict[str, str]:
+                     session: AsyncSession) -> Dict[str, str]:
         result = await session.execute(select(columns).where(condition))
         col_names = tuple([*result._metadata.keys])
         data = result.fetchone()

@@ -35,26 +35,26 @@ services:
       - ./backend/authorization/media:/backend/authorization/media
     networks:
       - default
-#  main:
-#    container_name: main
-#    depends_on:
-#      alembic:
-#        condition: service_completed_successfully
-#      postgres:
-#        condition: service_healthy
-#    build:
-#      context: ./backend
-#      dockerfile: backend/main.Dockerfile
-#    ports:
-#      - "8001:8001"
-#    command:
-#       python3 main/main.py
-#    env_file:
-#      - backend/main/.env_prod
-#    volumes:
-#      - ./backend/main/media:/backend/main/media
-#    networks:
-#      - default
+  core:
+    container_name: core
+    depends_on:
+      alembic:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    build:
+      context: ./backend
+      dockerfile: core.Dockerfile
+    ports:
+      - "8001:8001"
+    command:
+       python3 core/main.py
+    env_file:
+      - backend/core/.env_prod
+    volumes:
+      - ./backend/core/media:/backend/main/media
+    networks:
+      - default
   postgres:
     build:
       context: ./postgres

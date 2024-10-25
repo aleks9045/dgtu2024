@@ -15,7 +15,7 @@ from config import ORIGINS, MEDIA_FOLDER
 #
 # applications.get_swagger_ui_html = swagger_monkey_patch
 
-app = FastAPI(title="FastAPI", version="1.0.0")
+app = FastAPI(title="FastAPI JWT", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,

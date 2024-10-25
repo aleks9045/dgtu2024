@@ -17,7 +17,7 @@ class BaseUserModel(Base):
 
     email: Mapped[str] = Column(VARCHAR(64), nullable=False, unique=True)
     password: Mapped[str] = Column(VARCHAR(1024), nullable=False)
-    photo: Mapped[str] = Column(VARCHAR(255), nullable=True)
+    photo: Mapped[str] = Column(VARCHAR(255), nullable=True, default=f'authorization/media/user_photos/default.png')
     created_at: Mapped[datetime] = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     public_columns = (name, surname, email, photo)
@@ -73,14 +73,6 @@ class LevelModel(Base):
     __tablename__ = "level"
     id_l: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     required_points: Mapped[int] = Column(Integer, nullable=False)
-
-
-
-
-
-
-
-
 
 # class MarkModel(Base):
 #     __tablename__ = "mark"

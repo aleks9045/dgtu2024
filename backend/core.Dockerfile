@@ -4,11 +4,11 @@ FROM python:3.12.0-alpine3.18
 ENV PYTHONDONTWRITEBYTECODE 1
 # Если проект крашнется, выведется сообщение из-за какой ошибки это произошло
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONPATH "Api"
+ENV PYTHONPATH "core"
 
 WORKDIR backend/
 
-COPY ./requirements.txt .
+COPY ./core/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main/ main/
+COPY core/ core/
