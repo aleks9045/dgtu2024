@@ -43,3 +43,4 @@ class Files:
     @staticmethod
     async def delete(file_path: str):
         await os.remove(file_path)
+

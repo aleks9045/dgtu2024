@@ -5,14 +5,15 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class UserCreateSchema(BaseModel):
-    first_name: str = Field(title="user's first_name", max_length=32)
-    last_name: str = Field(title="user's last_name", max_length=32)
-    father_name: str = Field(title="user's father_name", max_length=32)
+    name: str = Field(title="user's name", max_length=32)
+    surname: str = Field(title="user's surname", max_length=32)
+    patronymic: str = Field(title="user's patronymic", max_length=32)
     email: EmailStr = Field(title="user's email", max_length=64)
     password: str = Field(title="user's password", max_length=64)
 
     about: str = Field(title="about user", max_length=255, default=None)
     is_user: bool = Field(default=True)
+    is_admin: bool = Field(default=False)
 
 
 class UserLoginSchema(BaseModel):
@@ -21,14 +22,14 @@ class UserLoginSchema(BaseModel):
 
 
 class UserPatchSchema(BaseModel):
-    first_name: Optional[str] = Field(title="user's first_name", default=None)
-    last_name: Optional[str] = Field(title="user's last_name", default=None)
-    father_name: Optional[str] = Field(title="user's father_name", default=None)
-    about: Optional[str] = Field(title="about user", default=None)
+    first_name: Optional[str] = Field(default=None)
+    last_name: Optional[str] = Field(default=None)
+    father_name: Optional[str] = Field(default=None)
+    about: Optional[str] = Field(default=None)
     is_user: bool = Field(default=True)
 
 
-class ChangeEmail(BaseModel):
+class ForgotPassword(BaseModel):
     email: str = Field(title="user's email")
 
 

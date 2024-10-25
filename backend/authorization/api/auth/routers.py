@@ -15,13 +15,18 @@ from api.auth.utils.userquerys import UserSelectQuery, UserInsertQuery, UserUpda
 from api.querys import SelectQuery
 from config import MEDIA_FOLDER
 from database import db_session
-from models import BaseUserModel, UserModel
+from models import BaseUserModel, UserModel, AdminModel
 
 router = APIRouter(
     prefix="/auth",
     tags=["Auth"]
 )
 
+async def existing_user(payload: dict = Depends(token.check),
+                        session: AsyncSession = Depends(db_session.get_async_session)):
+    if not await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
+        raise HTTPException(status_code=404, detail="User not found")
+    return payload
 
 @router.post('/register', summary="Create new user",
              description=f"data field: \n\n```\n\n {SchemaUtils.generate_example(UserCreateSchema)} \n\n```")
@@ -42,6 +47,8 @@ async def create_user(schema: UserCreateSchema = Depends(Checker(UserCreateSchem
 
     if schema["is_user"]:
         await UserInsertQuery.insert(UserModel, schema, session)
+    elif schema["is_admin"]:
+        await UserInsertQuery.insert(AdminModel, schema, session)
     else:
         raise HTTPException(status_code=400, detail="Не указана роль пользователя.")
     return Response(status_code=201)
@@ -65,10 +72,9 @@ async def create_new_tokens(schema: UserLoginSchema,
 
 
 @router.get('/refresh', summary="Update access and refresh tokens")
-async def get_new_tokens(payload: dict = Depends(token.check),
+async def get_new_tokens(payload: dict = Depends(existing_user),
                          session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    if await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
-        raise HTTPException(status_code=404)
+
     return JSONResponse(status_code=200, content={
         "access": token.create(payload["sub"], type_="access"),
         "refresh": token.create(payload["sub"], type_="refresh")
@@ -79,44 +85,34 @@ async def logout() -> Response:
     return Response(status_code=200)
 
 @router.get('/user', summary="Get information about user")
-async def get_user(payload: dict = Depends(token.check),
+async def get_user(payload: dict = Depends(existing_user),
                    session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    if await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
-        raise HTTPException(status_code=404)
+
     return JSONResponse(status_code=200, content=await UserSelectQuery.get_user(payload, session))
 
 
 @router.patch('/user', summary="Change user's information")
 async def patch_user(schema: UserPatchSchema,
-                     payload: dict = Depends(token.check),
+                     payload: dict = Depends(existing_user),
                      session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    if await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
-        raise HTTPException(status_code=404)
     schema = schema.model_dump()
-
     new_data = await UserUpdateQuery.merge_new_n_old(schema, payload, session)
     await UserUpdateQuery.update_user(new_data, payload, session)
     return Response(status_code=200)
 
 
 @router.delete('/user', summary="Delete user")
-async def delete_user(payload: dict = Depends(token.check),
+async def delete_user(payload: dict = Depends(existing_user),
                       session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    if await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
-        raise HTTPException(status_code=404)
-
     await UserDeleteQuery.delete_photo(payload, session)
     await UserDeleteQuery.delete_user(payload, session)
-
     return Response(status_code=200)
 
 
 @router.patch('/photo', summary="Patch user's photo")
-async def delete_photo(payload: dict = Depends(token.check),
+async def delete_photo(payload: dict = Depends(existing_user),
                        photo: UploadFile = File(...),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    if await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
-        raise HTTPException(status_code=404)
 
     file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
     await UserDeleteQuery.delete_photo(payload, session)
@@ -129,12 +125,9 @@ async def delete_photo(payload: dict = Depends(token.check),
 
 
 @router.delete('/photo', summary="Delete user's photo")
-async def delete_photo(payload: dict = Depends(token.check),
+async def delete_photo(payload: dict = Depends(existing_user),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    if await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
-        raise HTTPException(status_code=404)
     await UserDeleteQuery.delete_photo(payload, session)
-
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
         photo=f'{MEDIA_FOLDER}/user_photos/default.png'))
 

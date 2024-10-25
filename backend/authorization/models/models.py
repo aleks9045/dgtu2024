@@ -10,14 +10,15 @@ class BaseUserModel(Base):
     __tablename__ = "baseuser"
     id_bu: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     uu_id: Mapped[str] = Column(UUID(as_uuid=True), nullable=False, unique=True)
-    first_name: Mapped[str] = Column(VARCHAR(32), nullable=False)
-    last_name: Mapped[str] = Column(VARCHAR(32), nullable=False)
-    father_name: Mapped[str] = Column(VARCHAR(32), nullable=True)
+    name: Mapped[str] = Column(VARCHAR(32), nullable=False)
+    surname: Mapped[str] = Column(VARCHAR(32), nullable=False)
+    patronymic: Mapped[str] = Column(VARCHAR(32), nullable=True)
+
     email: Mapped[str] = Column(VARCHAR(64), nullable=False, unique=True)
     password: Mapped[str] = Column(VARCHAR(1024), nullable=False)
     photo: Mapped[str] = Column(VARCHAR(255), nullable=True)
 
-    public_columns = (first_name, last_name, father_name, email, photo)
+    public_columns = (name, surname, patronymic, email, photo)
 
 
 class UserModel(Base):
