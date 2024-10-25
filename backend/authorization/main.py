@@ -2,14 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi import applications
-from fastapi.openapi.docs import get_swagger_ui_html
 
 from api.auth.routers import router as api_auth_router
-
 from config import ORIGINS, MEDIA_FOLDER
-from database import db_session
-
 
 # def swagger_monkey_patch(*args, **kwargs):
 #     return get_swagger_ui_html(
@@ -40,7 +35,5 @@ app.include_router(api_auth_router)
 
 app.mount("/media", StaticFiles(directory=MEDIA_FOLDER, check_dir=True))
 
-
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="0.0.0.0", port=8000, log_level="info")
-
