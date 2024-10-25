@@ -9,7 +9,7 @@ services:
       dockerfile: alembic.Dockerfile
     command:
       /bin/sh -c "alembic revision --autogenerate -m "initial" &&
-      alembic upgrade head"
+      alembic upgrade head && python initializations.py"
     volumes:
       - ./backend/alembic/db_migrations/versions:/alembic/db_migrations/versions
     networks:
@@ -53,7 +53,7 @@ services:
       timeout: 3s
       retries: 3
       start_period: 7s
-      start_interval: 0.5s
+      start_interval: 1s
     restart: always
     networks:
       - default

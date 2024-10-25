@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, VARCHAR, ForeignKey, UUID
+import datetime
+
+from sqlalchemy import Column, Integer, VARCHAR, ForeignKey, UUID, DateTime, func
 from sqlalchemy.orm import Mapped
 
 from database import db_session
@@ -7,26 +9,26 @@ Base = db_session.base
 
 
 class BaseUserModel(Base):
-    __tablename__ = "baseuser"
+    __tablename__ = "base_user"
     id_bu: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     uu_id: Mapped[str] = Column(UUID(as_uuid=True), nullable=False, unique=True)
     name: Mapped[str] = Column(VARCHAR(32), nullable=False)
     surname: Mapped[str] = Column(VARCHAR(32), nullable=False)
-    patronymic: Mapped[str] = Column(VARCHAR(32), nullable=True)
 
     email: Mapped[str] = Column(VARCHAR(64), nullable=False, unique=True)
     password: Mapped[str] = Column(VARCHAR(1024), nullable=False)
     photo: Mapped[str] = Column(VARCHAR(255), nullable=True)
+    created: Mapped[datetime] = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    public_columns = (name, surname, patronymic, email, photo)
+    public_columns = (name, surname, email, photo)
 
 
 class UserModel(Base):
     __tablename__ = "user"
     id_u: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     about: Mapped[str] = Column(VARCHAR(255), nullable=True)
-    baseuser: Mapped[int] = Column(Integer, ForeignKey('baseuser.id_bu', ondelete="CASCADE"), unique=True,
-                                   nullable=False)
+    base_user: Mapped[int] = Column(Integer, ForeignKey('base_user.id_bu', ondelete="CASCADE"), unique=True,
+                                    nullable=False)
 
     public_columns = (id_u, about)
 
@@ -34,8 +36,51 @@ class UserModel(Base):
 class AdminModel(Base):
     __tablename__ = "admin"
     id_a: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
-    baseuser: Mapped[int] = Column(Integer, ForeignKey('baseuser.id_bu', ondelete="CASCADE"), unique=True,
-                                   nullable=False)
+    base_user: Mapped[int] = Column(Integer, ForeignKey('base_user.id_bu', ondelete="CASCADE"), unique=True,
+                                    nullable=False)
+
+
+class InterestsModel(Base):
+    __tablename__ = "interests"
+    id_i: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = Column(VARCHAR(32), nullable=False)
+
+
+class UserInterestsModel(Base):
+    __tablename__ = "user_interests"
+    id_ui: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
+    id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), unique=True, nullable=False)
+    id_i: Mapped[int] = Column(Integer, ForeignKey('interests.id_i', ondelete="CASCADE"), unique=True, nullable=False)
+
+
+class GoalsModel(Base):
+    __tablename__ = "goals"
+    id_g: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = Column(VARCHAR(32), nullable=False)
+    desc: Mapped[str] = Column(VARCHAR(255), nullable=False)
+    id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), unique=True, nullable=False)
+
+
+class LocalAchievements(Base):
+    __tablename__ = "local_achievements"
+
+    id_lach: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
+    title: Mapped[str] = Column(VARCHAR(32), nullable=False)
+    id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u'), nullable=False)
+
+
+class LevelModel(Base):
+    __tablename__ = "level"
+    id_l: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
+    required_points: Mapped[int] = Column(Integer, nullable=False)
+
+
+
+
+
+
+
+
 
 # class MarkModel(Base):
 #     __tablename__ = "mark"

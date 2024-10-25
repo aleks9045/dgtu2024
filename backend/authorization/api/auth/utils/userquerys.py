@@ -19,7 +19,7 @@ class UserSelectQuery(SelectQuery):
     async def get_user(cls, payload: dict, session: AsyncSession) -> Dict[str, Any]:
         data = await cls.join_two(BaseUserModel, UserModel,
                                   BaseUserModel.uu_id == payload["sub"],
-                                  BaseUserModel.id_bu, UserModel.baseuser,
+                                  BaseUserModel.id_bu, UserModel.base_user,
                                   session,
                                   columns1=BaseUserModel.public_columns,
                                   columns2=UserModel.public_columns)
@@ -30,7 +30,7 @@ class UserSelectQuery(SelectQuery):
     async def get_admin(cls, payload: dict, session: AsyncSession) -> Dict[str, Any]:
         data = await cls.join_two(BaseUserModel, AdminModel,
                                   BaseUserModel.uu_id == payload["sub"],
-                                  BaseUserModel.id_bu, AdminModel.baseuser,
+                                  BaseUserModel.id_bu, AdminModel.base_user,
                                   session,
                                   columns1=BaseUserModel.public_columns)
         return data[0]
@@ -38,7 +38,7 @@ class UserSelectQuery(SelectQuery):
     @classmethod
     async def get_all_users(cls, session: AsyncSession) -> Dict[str, Any]:
         data = await cls.join_two(BaseUserModel, UserModel, 1 == 1,
-                                  BaseUserModel.id_bu, UserModel.baseuser,
+                                  BaseUserModel.id_bu, UserModel.base_user,
                                   session,
                                   columns1=BaseUserModel.public_columns,
                                   columns2=UserModel.public_columns)
@@ -85,7 +85,7 @@ class UserUpdateQuery(BaseQuery):
                 father_name=bindparam("father_name")).returning(BaseUserModel.id_bu),
             new_data)
         await session.execute(
-            update(UserModel).where(UserModel.baseuser == id_bu.fetchone()[0]).values(
+            update(UserModel).where(UserModel.base_user == id_bu.fetchone()[0]).values(
                 about=bindparam("about")),
             new_data)
 
@@ -96,7 +96,7 @@ class UserDeleteQuery(DeleteQuery):
     async def delete_user(cls, payload: dict, session: AsyncSession):
         id_bu = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
         id_bu = int(id_bu["id_bu"])
-        await cls.delete(UserModel, UserModel.baseuser == id_bu, session)
+        await cls.delete(UserModel, UserModel.base_user == id_bu, session)
         await cls.delete(BaseUserModel, BaseUserModel.id_bu == id_bu, session)
 
     @classmethod

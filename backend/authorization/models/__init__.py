@@ -1,3 +1,18 @@
-__all__ = ('BaseUserModel', 'UserModel', 'AdminModel', 'Base')
+__all__ = (
+    'BaseUserModel',
+    'UserModel',
+    'AdminModel',
+    'Base',
+    'InterestsModel',
+    'UserInterestsModel',
+    'LocalAchievements',
+    'LevelModel'
+)
 
-from .models import BaseUserModel, UserModel, AdminModel, Base
+from .models import BaseUserModel, \
+    UserModel, \
+    AdminModel, \
+    Base, InterestsModel, \
+    UserInterestsModel, \
+    LocalAchievements, \
+    LevelModel
