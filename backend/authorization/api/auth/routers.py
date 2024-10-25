@@ -21,7 +21,8 @@ router = APIRouter(
 
 async def existing_user(payload: dict = Depends(token.check),
                         session: AsyncSession = Depends(db_session.get_async_session)):
-
+    print("CHECK EXISTING USER")
+    print(payload["sub"])
     if not await SelectQuery.exists(BaseUserModel, BaseUserModel.uu_id == payload["sub"], session):
         raise HTTPException(status_code=404, detail="User not found")
     return payload
