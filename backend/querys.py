@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Union, Any, List, Dict
 
 from sqlalchemy import inspect, select, delete
@@ -94,10 +93,11 @@ class SelectQuery(BaseQuery):
 
                          col2_2: Union[InstrumentedAttribute, Any],
                          col2_3: Union[InstrumentedAttribute, Any],
-                          columns1: tuple = (), columns2: tuple = (), columns3=()):
+                         columns1: tuple = (), columns2: tuple = (), columns3=()):
 
-        result = await session.execute(select(*columns1, *columns2, *columns3).where(condition).join(model2, col1 == col2).join(model3,
-                                                                                                         col2_2 == col2_3))
+        result = await session.execute(
+            select(*columns1, *columns2, *columns3).select_from(model1).where(condition).join(model2, col1 == col2).join(model3,
+                                                                                                     col2_2 == col2_3))
 
         col_names = tuple([*result._metadata.keys])
         data = tuple(result.fetchall())
