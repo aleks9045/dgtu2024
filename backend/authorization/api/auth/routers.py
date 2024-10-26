@@ -98,27 +98,27 @@ async def delete_user(payload: dict = Depends(existing_user),
 
 
 @router.post('/photo', summary="Upload user's photo")
-async def delete_photo(payload: dict = Depends(existing_user),
+async def load_photo(payload: dict = Depends(existing_user),
                        photo: UploadFile = File(...),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
     await Files.load(file_path, photo)
-
+    print(photo.filename)
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
         photo=f'/media/user_photos/{photo.filename}'))
-
+    print(f'/media/user_photos/{photo.filename}')
     return Response(status_code=200)
 
 @router.patch('/photo', summary="Patch user's photo")
-async def delete_photo(payload: dict = Depends(existing_user),
+async def patch_photo(payload: dict = Depends(existing_user),
                        photo: UploadFile = File(...),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    file_path = 'media/user_photos/{photo.filename}'
+    file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
     await UserDeleteQuery.delete_photo(payload, session)
     await Files.load(file_path, photo)
 
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
-        photo='media/user_photos/{file_path}'))
+        photo=f'media/user_photos/{file_path}'))
 
     return Response(status_code=200)
 
