@@ -45,7 +45,10 @@ class BaseQuery:
     async def make_dict(cls, data: (), col_names: ()) -> Dict[str, str]:
         res_dct = {}
         for col_num in range(len(col_names)):
-            res_dct[col_names[col_num]] = data[col_num]
+            if data[col_num] is not None:
+                res_dct[col_names[col_num]] = data[col_num]
+            else:
+                res_dct[col_names[col_num]] = str("None")
         return res_dct
 
 
