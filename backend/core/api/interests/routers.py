@@ -37,11 +37,19 @@ async def verify_token(token: Annotated[HTTPAuthorizationCredentials, Depends(se
 @router.get('/', summary="")
 async def get_interests(payload: str = Depends(verify_token),
                         session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    return JSONResponse(status_code=200, content=await SelectQuery.join_three(BaseUserModel, UserModel, InterestsModel,
+    return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
+                                                                              BaseUserModel, UserModel, InterestsModel,
                                                                               BaseUserModel.uu_id == payload["sub"],
+
                                                                               BaseUserModel.id_bu,
                                                                               UserModel.base_user,
-                                                                              InterestsModel.id_i, session))
+
+                                                                              UserModel.id_u,
+                                                                              InterestsModel.id_u,
+
+                                                                              BaseUserModel.public_columns,
+                                                                              UserModel.public_columns,
+                                                                              InterestsModel.__table__.columns))
 
 
 @router.post('/', summary="")

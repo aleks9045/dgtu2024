@@ -56,6 +56,7 @@ class InterestsModel(Base):
     id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), unique=True, nullable=False)
 
 
+
 class GoalsModel(Base):
     __tablename__ = "goals"
     id_g: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
