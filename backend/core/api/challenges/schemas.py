@@ -39,5 +39,8 @@ class ChallengePatchSchema(BaseModel):
 class ChallengesByEmailsSchema(BaseModel):
     email: str
 
-class ChallengesAddUserSchema(BaseModel):
+class ChallengesIdSchema(BaseModel):
     id_ch: int
+
+class AchievementsIdSchema(BaseModel):
+    id_gach: int

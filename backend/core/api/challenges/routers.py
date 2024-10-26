@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
 from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, ChallengesByEmailsSchema, \
-    ChallengesAddUserSchema
+    ChallengesIdSchema, AchievementsIdSchema
 from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery
 from database import db_session
-from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel
+from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel, GAchUserModel
 from querys import SelectQuery
 from veryfication import verify_token
 
@@ -20,8 +20,8 @@ router = APIRouter(
 )
 
 
-@router.get('/', summary="Get challenges")
-async def get_challenges(payload: dict = Depends(verify_token),
+@router.get('/by_user', summary="Get challenges by user")
+async def get_challenges_by_user(payload: dict = Depends(verify_token),
                          session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
     bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
     return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
@@ -29,6 +29,24 @@ async def get_challenges(payload: dict = Depends(verify_token),
                                                                               UserModel,
                                                                               UserModel.base_user == int(
                                                                                   bu_data["id_bu"]),
+
+                                                                              ChallengesModel.id_ch,
+                                                                              UserChallModel.id_ch,
+
+                                                                              UserChallModel.id_u,
+                                                                              UserModel.id_u,
+
+                                                                              columns1=ChallengesModel.public_columns,
+                                                                              columns3=UserModel.public_columns
+                                                                              ))
+@router.get('/users_by_challenges', summary="Get users by challenges")
+async def get_challenges_by_user(schema: ChallengesIdSchema,
+        payload: dict = Depends(verify_token),
+                         session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+    return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
+                                                                              ChallengesModel, UserChallModel,
+                                                                              UserModel,
+                                                                              ChallengesModel.id_ch == schema.id_ch,
 
                                                                               ChallengesModel.id_ch,
                                                                               UserChallModel.id_ch,
@@ -69,11 +87,20 @@ async def patch_challenges(schema: ChallengePatchSchema,
     return Response(status_code=200)
 
 @router.post('/add_user', summary="Add user to challenge")
-async def add_user(schema: ChallengesAddUserSchema,
-                           payload: dict = Depends(verify_token),
-                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+async def add_user(schema: ChallengesIdSchema,
+                   payload: dict = Depends(verify_token),
+                   session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    await ChallengesInsertQuery.insert(UserChallModel, schema, payload, session)
+    await ChallengesInsertQuery.insert_with_payload(UserChallModel, schema, payload, session)
+    return Response(status_code=200)
+
+@router.post('/add_achievement', summary="Add user to achievement")
+async def add_achievement(schema: AchievementsIdSchema,
+                          payload: dict = Depends(verify_token),
+                          session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+    schema = schema.model_dump()
+    id_gach = await ChallengesInsertQuery.insert_with_payload(GAchUserModel, schema, payload, session)
+    print(id_gach)
     return Response(status_code=200)
 
 

@@ -30,9 +30,13 @@ class ChallengesSelectQuery(SelectQuery):
 
 class ChallengesInsertQuery(BaseQuery):
     @classmethod
-    async def insert(cls, model: Base, schema: dict[str, Any], payload: dict, session: AsyncSession):
+    async def insert_with_payload(cls, model: Base, schema: dict[str, Any], payload: dict, session: AsyncSession):
         schema["id_u"] = await ChallengesSelectQuery.get_id_u(payload, session)
-        await session.execute(insert(model), await BaseQuery.make_one_dict_from_schema(model, schema))
+        return await session.execute(insert(model).returning(model), await BaseQuery.make_one_dict_from_schema(model, schema))
+
+    @classmethod
+    async def insert(cls, model: Base, schema: dict[str, Any], session: AsyncSession):
+        return await session.execute(insert(model), await BaseQuery.make_one_dict_from_schema(model, schema))
 
 
 class ChallengesUpdateQuery(BaseQuery):
@@ -45,8 +49,6 @@ class ChallengesUpdateQuery(BaseQuery):
         data = old_data.fetchone()
 
         old_data = await cls.make_dict(data, col_names)
-        print(col_names)
-        print(old_data)
         for key, value in schema.items():
             if schema[key] is None:
                 try:
@@ -63,6 +65,29 @@ class ChallengesUpdateQuery(BaseQuery):
 
         await session.execute(
             update(ChallengesModel).where(
+                ChallengesModel.id_ch == new_data["id_ch"]).values(
+                name=bindparam("name"),
+                desc=bindparam("desc"),
+                start=bindparam("start"),
+                end=bindparam("end"),
+                accepted=bindparam("accepted"),
+                type=bindparam("type"),
+                creator=bindparam("creator")
+            ),
+            new_data)
+        await session.execute(
+            update(GlobalAchievementsModel).where(
+                GlobalAchievementsModel.id_gach == new_data["id_ch"]).values(
+                title=bindparam("title"),
+                points=bindparam("points")
+            ),
+            new_data)
+
+    @classmethod
+    async def update_user_points(cls, new_data: dict, session: AsyncSession):
+
+        await session.execute(
+            update(UserModel).where(
                 ChallengesModel.id_ch == new_data["id_ch"]).values(
                 name=bindparam("name"),
                 desc=bindparam("desc"),
