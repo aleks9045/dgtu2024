@@ -28,11 +28,11 @@ class BaseQuery:
         return data
 
     @classmethod
-    async def make_list_of_dicts(cls, data: (), col_names: ()) -> List[Dict[str, str]]:
+    async def make_list_of_dicts(cls, data: (), col_names: ()) -> List[Dict[str, Any]]:
         res_lst, temp_dct = [], {}
         for data_row in data:
             for col_num in range(len(col_names)):
-                temp_dct[col_names[col_num]] = str(data_row[col_num])
+                temp_dct[col_names[col_num]] = data_row[col_num]
             res_lst.append(temp_dct)
             temp_dct = {}
         return res_lst

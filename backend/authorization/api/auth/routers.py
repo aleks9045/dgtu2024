@@ -128,7 +128,7 @@ async def delete_photo(payload: dict = Depends(existing_user),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     await UserDeleteQuery.delete_photo(payload, session)
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
-        photo='media/user_photos/default.png'))
+        photo=f'{MEDIA_FOLDER}/user_photos/default.png'))
 
     return Response(status_code=200)
 

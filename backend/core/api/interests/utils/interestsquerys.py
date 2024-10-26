@@ -17,6 +17,7 @@ class InterestsSelectQuery(SelectQuery):
         u_data = await SelectQuery.select(UserModel.id_u, UserModel.base_user == int(bu_data["id_bu"]), session)
         return int(u_data["id_u"])
 
+
     @classmethod
     async def get_all_users(cls, session: AsyncSession) -> Dict[str, Any]:
         data = await cls.join_two(BaseUserModel, UserModel, 1 == 1,

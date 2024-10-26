@@ -30,9 +30,7 @@ async def get_interests(payload: str = Depends(verify_token),
                                                                               UserModel.id_u,
                                                                               InterestsModel.id_u,
 
-                                                                              BaseUserModel.public_columns,
-                                                                              UserModel.public_columns,
-                                                                              InterestsModel.public_columns))
+                                                                              columns3=InterestsModel.public_columns))
 
 
 @router.post('/', summary="Post interests")
