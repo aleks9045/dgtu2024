@@ -33,4 +33,3 @@ starlette==0.37.2
 typing_extensions==4.11.0
 uvicorn==0.29.0
 watchfiles==0.21.0
-python-dateutil
