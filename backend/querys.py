@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union, Any, List, Dict
 
 from sqlalchemy import inspect, select, delete
@@ -32,6 +33,9 @@ class BaseQuery:
         res_lst, temp_dct = [], {}
         for data_row in data:
             for col_num in range(len(col_names)):
+                if isinstance(data_row[col_num], datetime):
+                    temp_dct[col_names[col_num]] = str(data_row[col_num])
+                    continue
                 temp_dct[col_names[col_num]] = data_row[col_num]
             res_lst.append(temp_dct)
             temp_dct = {}
@@ -41,7 +45,7 @@ class BaseQuery:
     async def make_dict(cls, data: (), col_names: ()) -> Dict[str, str]:
         res_dct = {}
         for col_num in range(len(col_names)):
-            res_dct[col_names[col_num]] = str(data[col_num])
+            res_dct[col_names[col_num]] = data[col_num]
         return res_dct
 
 
@@ -59,7 +63,7 @@ class SelectQuery(BaseQuery):
     async def select_all(cls, columns: Base,
                          order_column: Union[InstrumentedAttribute, Any],
                          session: AsyncSession) -> List[Dict[str, str]]:
-        result = await session.execute(select(columns).where(True).order_by(order_column))
+        result = await session.execute(select(*columns).where(True).order_by(order_column))
         col_names = tuple([*result._metadata.keys])
         data = tuple(result.fetchall())
         return await cls.make_list_of_dicts(data, col_names)

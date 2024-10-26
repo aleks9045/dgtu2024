@@ -8,9 +8,6 @@ from pydantic import BaseModel, Field
 class ChallengeCreateSchema(BaseModel):
     name: str
     desc: Optional[str]
-    rules: Optional[str]
-    status: Optional[str]
-    points: int
     start: Optional[datetime]
     end: Optional[datetime]
     photo: Optional[str]
@@ -18,14 +15,14 @@ class ChallengeCreateSchema(BaseModel):
     accepted: bool = Field(default=False)
     type: Optional[str]
     creator: str
-
+    title: str = Field(title="Achievement")
+    points: int = Field(title="Achievement")
 
 
 class ChallengePatchChema(BaseModel):
+    id_ch: int
     name: str = Field(default=None)
     desc: Optional[str] = Field(default=None)
-    rules: Optional[str] = Field(default=None)
-    status: Optional[str] = Field(default=None)
     points: int = Field(default=None)
     start: Optional[datetime] = Field(default=None)
     end: Optional[datetime] = Field(default=None)
