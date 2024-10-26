@@ -68,7 +68,7 @@ async def patch_challenges(schema: ChallengePatchSchema,
     await ChallengesUpdateQuery.update_challenges(new_data, session)
     return Response(status_code=200)
 
-@router.post('/add_user', summary="Add_user to challenge")
+@router.post('/add_user', summary="Add user to challenge")
 async def add_user(schema: ChallengesAddUserSchema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:

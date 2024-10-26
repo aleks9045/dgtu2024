@@ -11,6 +11,8 @@ class GoalsCreateSchema(BaseModel):
     start: Optional[datetime]
     end: Optional[datetime]
     status: str
+    steps: int = Field(default=None)
+    sleep_millis: int = Field(default=None)
 
 
 class GoalsPatchSchema(BaseModel):
@@ -20,3 +22,5 @@ class GoalsPatchSchema(BaseModel):
     start: Optional[datetime] = Field(default=None)
     end: Optional[datetime] = Field(default=None)
     status: Optional[str] = Field(default=None)
+    steps: int = Field(default=None)
+    sleep_millis: int = Field(default=None)
