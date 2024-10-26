@@ -45,7 +45,6 @@ class BaseQuery:
         return res_dct
 
 
-
 class SelectQuery(BaseQuery):
 
     @classmethod

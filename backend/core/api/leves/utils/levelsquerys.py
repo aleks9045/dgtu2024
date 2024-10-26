@@ -11,7 +11,7 @@ Base = db_session.base
 
 class LevelsSelectQuery(SelectQuery):
     @classmethod
-    async def get_points(cls, payload: dict, session: AsyncSession) -> int:
+    async def get_points(cls, payload: dict, session: AsyncSession) -> dict[str, Any]:
         bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
-        u_data = await SelectQuery.select(UserModel.id_u, UserModel.base_user == int(bu_data["id_bu"]), session)
-        return int(u_data["points"])
+        u_data = await SelectQuery.select(UserModel.points, UserModel.base_user == int(bu_data["id_bu"]), session)
+        return u_data

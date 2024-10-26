@@ -35,6 +35,4 @@ async def verify_token(token: Annotated[HTTPAuthorizationCredentials, Depends(se
 @router.get('/', summary="Get level")
 async def get_level(payload: dict = Depends(verify_token),
                     session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    points = await LevelsSelectQuery.get_points(payload, session)
-    await session.execute(select(LevelModel.id_l).where(LevelModel.required_points <= points))
-    return JSONResponse(status_code=200, content=await session.execute(select(LevelModel.id_l).where(LevelModel.required_points <= points)))
+    return JSONResponse(status_code=200, content=await LevelsSelectQuery.get_points(payload, session))

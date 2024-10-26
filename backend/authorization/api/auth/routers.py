@@ -103,10 +103,10 @@ async def load_photo(payload: dict = Depends(existing_user),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
     await Files.load(file_path, photo)
-    print(photo.filename)
+
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
         photo=f'/{MEDIA_FOLDER}/user_photos/{photo.filename}'))
-    print(f'/{MEDIA_FOLDER}/user_photos/{photo.filename}')
+
     return Response(status_code=200)
 
 @router.patch('/photo', summary="Patch user's photo")
