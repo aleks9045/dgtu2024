@@ -112,29 +112,29 @@ services:
     restart: unless-stopped
     networks:
       - media_network
-#    depends_on:
-#      coturn:
-#        condition: service_started
-#  coturn:
-#    image: instrumentisto/coturn
-#    container_name: coturn-server
-#    ports:
-#      - "3478:3478"     # STUN/TURN port
-#      - "3478:3478/udp" # STUN/TURN port (UDP)
-#      - "5349:5349"     # TURNS (TLS) port
-#    environment:
-#      - EXTERNAL_IP=89.46.131.17
-#    command:
-#      - turnserver
-#      - --no-auth
-#      - --realm=example.com
-#      - --no-dtls
-#      - --no-tls
-#      - --log-file=/var/log/turnserver.log
-#      - --verbose
-#
-#    networks:
-#      - media_network
+    depends_on:
+      coturn:
+        condition: service_started
+  coturn:
+    image: instrumentisto/coturn
+    container_name: coturn-server
+    ports:
+      - "3478:3478"     # STUN/TURN port
+      - "3478:3478/udp" # STUN/TURN port (UDP)
+      - "5349:5349"     # TURNS (TLS) port
+    environment:
+      - EXTERNAL_IP=89.46.131.17
+    command:
+      - turnserver
+      - --no-auth
+      - --realm=example.com
+      - --no-dtls
+      - --no-tls
+      - --log-file=/var/log/turnserver.log
+      - --verbose
+
+    networks:
+      - media_network
 
 
 volumes:
