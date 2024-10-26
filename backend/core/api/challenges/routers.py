@@ -1,10 +1,12 @@
+from typing import List
+
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema
+from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, ChallengesByEmailsSchema
 from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery
 from database import db_session
 from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel
@@ -40,8 +42,10 @@ async def get_challenges(payload: dict = Depends(verify_token),
 
 @router.get('/all', summary="Get all challenges")
 async def get_all_challenges(session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    return JSONResponse(status_code=200, content=await SelectQuery.join_two(ChallengesModel, GlobalAchievementsModel, 1==1,
-                                                                            ChallengesModel.id_ch, GlobalAchievementsModel.id_gach, session))
+    return JSONResponse(status_code=200,
+                        content=await SelectQuery.join_two(ChallengesModel, GlobalAchievementsModel, 1 == 1,
+                                                           ChallengesModel.id_ch, GlobalAchievementsModel.id_gach,
+                                                           session))
 
 
 @router.post('/', summary="Post challenges")
@@ -61,4 +65,12 @@ async def patch_challenges(schema: ChallengePatchSchema,
     schema = schema.model_dump()
     new_data = await ChallengesUpdateQuery.merge_new_n_old(schema, session)
     await ChallengesUpdateQuery.update_challenges(new_data, session)
+    return Response(status_code=200)
+
+
+@router.post('/by_emails', summary="Get challenges by emails")
+async def get_challenges_by_emails(schema: List[ChallengesByEmailsSchema],
+                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+    for s in schema:
+        print(s.email)
     return Response(status_code=200)

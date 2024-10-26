@@ -34,3 +34,7 @@ class ChallengePatchSchema(BaseModel):
     sleep_millis: int = Field(default=None)
     title: Optional[str] = Field(title="Achievement", default=None)
     points: Optional[int] = Field(title="Achievement", default=None)
+
+
+class ChallengesByEmailsSchema(BaseModel):
+    email: str
