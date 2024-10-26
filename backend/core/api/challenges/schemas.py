@@ -17,6 +17,7 @@ class ChallengeCreateSchema(BaseModel):
     file: Optional[str]
     accepted: bool = Field(default=False)
     type: Optional[str]
+    creator: str
 
 
 
@@ -32,3 +33,4 @@ class ChallengePatchChema(BaseModel):
     file: Optional[str] = Field(default=None)
     accepted: bool = Field(default=False)
     type: Optional[str] = Field(default=None)
+    creator: Optional[str] = Field(default=None)

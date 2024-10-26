@@ -1,14 +1,14 @@
 from typing import Any, Dict
 
-from sqlalchemy import insert, update, bindparam
+from sqlalchemy import update, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.apiquerys import ApiSelectQuery
 from database import db_session
 from models import BaseUserModel, UserModel, InterestsModel
 from querys import SelectQuery, BaseQuery
 
 Base = db_session.base
-
 
 
 class InterestsUpdateQuery(BaseQuery):
@@ -37,13 +37,14 @@ class InterestsUpdateQuery(BaseQuery):
                         schema[key] = old_data[key]
                 except KeyError:
                     continue
-        schema = {key: bool(value) if isinstance(value, bool) else value.lower() == 'true' for key, value in schema.items()}
+        schema = {key: bool(value) if isinstance(value, bool) else value.lower() == 'true' for key, value in
+                  schema.items()}
         return schema
 
     @classmethod
     async def update_interests(cls, new_data: dict, payload: dict, session: AsyncSession):
         await session.execute(
-            update(InterestsModel).where(InterestsModel.id_u == await InterestsSelectQuery.get_id_u(payload, session)).values(
+            update(InterestsModel).where(InterestsModel.id_u == await ApiSelectQuery.get_id_u(payload, session)).values(
                 sport=bindparam("sport"),
                 cooking=bindparam("cooking"),
                 art=bindparam("art"),

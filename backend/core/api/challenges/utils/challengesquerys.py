@@ -1,58 +1,36 @@
 from typing import Any, Dict
 
-from sqlalchemy import insert, update, bindparam
+from sqlalchemy import update, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.apiquerys import ApiSelectQuery
 from database import db_session
-from models import BaseUserModel, UserModel, InterestsModel
+from models import BaseUserModel, UserModel, InterestsModel, ChallengesModel
 from querys import SelectQuery, BaseQuery
 
 Base = db_session.base
 
 
-
 class CallengesUpdateQuery(BaseQuery):
-    @classmethod
-    async def merge_new_n_old(cls, schema: dict[str, Any], payload: dict, session: AsyncSession) -> Dict[str, str]:
-        old_data = await SelectQuery.join_three(session,
-                                                BaseUserModel, UserModel, InterestsModel,
-                                                BaseUserModel.uu_id == payload["sub"],
 
-                                                BaseUserModel.id_bu,
-                                                UserModel.base_user,
-
-                                                UserModel.id_u,
-                                                InterestsModel.id_u,
-
-                                                BaseUserModel.public_columns,
-                                                UserModel.public_columns,
-                                                InterestsModel.__table__.columns)
-        old_data = old_data[0]
-        for key, value in schema.items():
-            if schema[key] is None:
-                try:
-                    if old_data[key] == 'None':
-                        schema[key] = None
-                    else:
-                        schema[key] = old_data[key]
-                except KeyError:
-                    continue
-        schema = {key: bool(value) if isinstance(value, bool) else value.lower() == 'true' for key, value in schema.items()}
-        return schema
 
     @classmethod
-    async def update_interests(cls, new_data: dict, payload: dict, session: AsyncSession):
+    async def update_challenges(cls, new_data: dict, payload: dict, session: AsyncSession):
         await session.execute(
-            update(InterestsModel).where(InterestsModel.id_u == await InterestsSelectQuery.get_id_u(payload, session)).values(
-                sport=bindparam("sport"),
-                cooking=bindparam("cooking"),
-                art=bindparam("art"),
-                tech=bindparam("tech"),
-                communication=bindparam("communication"),
-                literature=bindparam("literature"),
-                animals=bindparam("animals"),
-                games=bindparam("games"),
-                music=bindparam("music"),
-                films=bindparam("films")
+            update(ChallengesModel).where(
+                ChallengesModel.id_ch == await ApiSelectQuery.get_id_ch(payload, session)).values(
+                name=bindparam("name"),
+                desc=bindparam("desc"),
+                rules=bindparam("rules"),
+                status=bindparam("status"),
+                points=bindparam("points"),
+                created_at=bindparam("created_at"),
+                start=bindparam("start"),
+                end=bindparam("end"),
+                photo=bindparam("photo"),
+                file=bindparam("file"),
+                accepted=bindparam("accepted"),
+                type=bindparam("type"),
+                creator=bindparam("creator")
             ),
             new_data)

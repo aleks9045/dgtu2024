@@ -4,11 +4,12 @@ from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.apiquerys import InsertQuery
+from api.apiquerys import ApiInsertQuery
 from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchChema
+from api.challenges.utils.challengesquerys import CallengesUpdateQuery
 from database import db_session
 from models import BaseUserModel, UserModel, InterestsModel, ChallengesModel, UserChallModel
-from querys import SelectQuery
+from querys import SelectQuery, BaseQuery
 from veryfication import verify_token
 
 router = APIRouter(
@@ -60,15 +61,15 @@ async def create_challenges(schema: ChallengeCreateSchema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    await InsertQuery.insert(ChallengesModel, schema, payload, session)
+    await ApiInsertQuery.insert(ChallengesModel, schema, payload, session)
     return Response(status_code=201)
 
 
-# @router.patch('/', summary="Patch challenges")
-# async def patch_challenges(schema: ChallengePatchChema,
-#                            payload: dict = Depends(verify_token),
-#                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-#     schema = schema.model_dump()
-#     new_data = await ChallengeUpdateQuery.merge_new_n_old(schema, payload, session)
-#     await ChallengeUpdateQuery.update_interests(new_data, payload, session)
-#     return Response(status_code=200)
+@router.patch('/', summary="Patch challenges")
+async def patch_challenges(schema: ChallengePatchChema,
+                           payload: dict = Depends(verify_token),
+                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+    schema = schema.model_dump()
+    new_data = await BaseQuery.merge_new_n_old(schema, payload, session)
+    await CallengesUpdateQuery.update_interests(new_data, payload, session)
+    return Response(status_code=200)

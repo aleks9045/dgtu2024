@@ -116,8 +116,8 @@ class ChallengesModel(Base):
     photo: Mapped[str] = Column(VARCHAR, nullable=True)
     file: Mapped[str] = Column(VARCHAR, nullable=True)
     accepted: Mapped[bool] = Column(BOOLEAN, nullable=False)
-
-    public_columns = (id_ch, name, desc, rules, status, points, start, end, photo, file, accepted)
+    creator: Mapped[str] = Column(VARCHAR, nullable=False)
+    public_columns = (id_ch, name, desc, rules, status, points, start, end, photo, file, accepted, creator)
 
 
 class UserChallModel(Base):

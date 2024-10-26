@@ -10,7 +10,7 @@ from querys import SelectQuery, BaseQuery
 Base = db_session.base
 
 
-class SelectQuery(SelectQuery):
+class ApiSelectQuery(SelectQuery):
     @classmethod
     async def get_id_u(cls, payload: dict, session: AsyncSession) -> int:
         bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
@@ -18,7 +18,7 @@ class SelectQuery(SelectQuery):
         return int(u_data["id_u"])
 
 
-class InsertQuery(BaseQuery):
+class ApiInsertQuery(BaseQuery):
     @classmethod
     async def insert(cls, model: Base, schema: dict[str, Any], payload: dict, session: AsyncSession):
         schema["id_u"] = await SelectQuery.get_id_u(payload, session)
