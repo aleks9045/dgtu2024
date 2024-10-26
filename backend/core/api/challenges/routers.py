@@ -49,8 +49,8 @@ async def create_challenges(schema: ChallengeCreateSchema,
                             payload: dict = Depends(verify_token),
                             session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    await ChallengesInsertQuery.insert(ChallengesModel, schema, payload, session)
-    await ChallengesInsertQuery.insert(GlobalAchievementsModel, schema, payload, session)
+    await ChallengesInsertQuery.insert(ChallengesModel, schema, session)
+    await ChallengesInsertQuery.insert(GlobalAchievementsModel, schema, session)
     return Response(status_code=201)
 
 
