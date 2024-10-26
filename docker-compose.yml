@@ -113,7 +113,6 @@ services:
     depends_on:
       coturn:
         condition: service_started
-  # Coturn STUN/TURN server for WebRTC
   coturn:
     image: instrumentisto/coturn
     container_name: coturn-server
