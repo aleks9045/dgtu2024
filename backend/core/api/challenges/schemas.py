@@ -6,30 +6,29 @@ from pydantic import BaseModel, Field
 
 
 class ChallengeCreateSchema(BaseModel):
-    id_ch: int
     name: str
-    desc: str
-    rules: str
-    status: str
+    desc: Optional[str]
+    rules: Optional[str]
+    status: Optional[str]
     points: int
-    created_at: datetime
-    start: datetime
-    end: datetime
-    photo: Optional[str] = None
-    file: Optional[str] = None
-    accepted: bool
-    type: str
+    start: Optional[datetime]
+    end: Optional[datetime]
+    photo: Optional[str]
+    file: Optional[str]
+    accepted: bool = Field(default=False)
+    type: Optional[str]
 
 
 
-class InterestPatchChema(BaseModel):
-    sport: Optional[bool] = Field(default=None)
-    cooking: Optional[bool] = Field(default=None)
-    art: Optional[bool] = Field(default=None)
-    tech: Optional[bool] = Field(default=None)
-    communication: Optional[bool] = Field(default=None)
-    literature: Optional[bool] = Field(default=None)
-    animals: Optional[bool] = Field(default=None)
-    games: Optional[bool] = Field(default=None)
-    music: Optional[bool] = Field(default=None)
-    films: Optional[bool] = Field(default=None)
+class ChallengePatchChema(BaseModel):
+    name: str = Field(default=None)
+    desc: Optional[str] = Field(default=None)
+    rules: Optional[str] = Field(default=None)
+    status: Optional[str] = Field(default=None)
+    points: int = Field(default=None)
+    start: Optional[datetime] = Field(default=None)
+    end: Optional[datetime] = Field(default=None)
+    photo: Optional[str] = Field(default=None)
+    file: Optional[str] = Field(default=None)
+    accepted: bool = Field(default=False)
+    type: Optional[str] = Field(default=None)

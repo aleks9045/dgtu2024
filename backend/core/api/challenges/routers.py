@@ -4,8 +4,8 @@ from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.interests.schemas import InterestCreateChema, InterestPatchChema
-from api.interests.utils.interestsquerys import InterestsInsertQuery, InterestsUpdateQuery
+from api.apiquerys import InsertQuery
+from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchChema
 from database import db_session
 from models import BaseUserModel, UserModel, InterestsModel, ChallengesModel, UserChallModel
 from querys import SelectQuery
@@ -56,19 +56,19 @@ async def get_all_challenges(payload: str = Depends(verify_token),
 
 
 @router.post('/', summary="Post challenges")
-async def create_challenges(schema: InterestCreateChema,
+async def create_challenges(schema: ChallengeCreateSchema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    await InterestsInsertQuery.insert(InterestsModel, schema, payload, session)
+    await InsertQuery.insert(ChallengesModel, schema, payload, session)
     return Response(status_code=201)
 
 
-@router.patch('/', summary="Patch challenges")
-async def patch_challenges(schema: InterestPatchChema,
-                           payload: dict = Depends(verify_token),
-                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    schema = schema.model_dump()
-    new_data = await InterestsUpdateQuery.merge_new_n_old(schema, payload, session)
-    await InterestsUpdateQuery.update_interests(new_data, payload, session)
-    return Response(status_code=200)
+# @router.patch('/', summary="Patch challenges")
+# async def patch_challenges(schema: ChallengePatchChema,
+#                            payload: dict = Depends(verify_token),
+#                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+#     schema = schema.model_dump()
+#     new_data = await ChallengeUpdateQuery.merge_new_n_old(schema, payload, session)
+#     await ChallengeUpdateQuery.update_interests(new_data, payload, session)
+#     return Response(status_code=200)

@@ -111,14 +111,13 @@ class ChallengesModel(Base):
     rules: Mapped[str] = Column(VARCHAR, nullable=False)
     status: Mapped[str] = Column(VARCHAR, nullable=False)
     points: Mapped[int] = Column(Integer, nullable=False)
-    created_at: Mapped[datetime] = Column(TIMESTAMP, nullable=False)
     start: Mapped[datetime] = Column(TIMESTAMP, nullable=False)
     end: Mapped[datetime] = Column(TIMESTAMP, nullable=False)
     photo: Mapped[str] = Column(VARCHAR, nullable=True)
     file: Mapped[str] = Column(VARCHAR, nullable=True)
     accepted: Mapped[bool] = Column(BOOLEAN, nullable=False)
 
-    public_columns = (id_ch, name, desc, rules, status, points, created_at, start, end, photo, file, accepted)
+    public_columns = (id_ch, name, desc, rules, status, points, start, end, photo, file, accepted)
 
 
 class UserChallModel(Base):

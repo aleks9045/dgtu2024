@@ -61,8 +61,9 @@ class UserInsertQuery(BaseQuery):
         u_data['base_user'] = id_bu
 
 
-
-        id_u = await session.execute(insert(model).returning(UserModel.id_u), u_data)
+        if schema["is_admin"]:
+            return await session.execute(insert(model), u_data)
+        id_u = await session.execute(insert(model).returning(model.id_u), u_data)
 
         schema["id_u"] = int(id_u.scalars().one())
         await session.execute(insert(InterestsModel), schema)
