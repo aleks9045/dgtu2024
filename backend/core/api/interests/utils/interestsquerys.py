@@ -14,6 +14,7 @@ Base = db_session.base
 class InterestsUpdateQuery(BaseQuery):
     @classmethod
     async def merge_new_n_old(cls, schema: dict[str, Any], payload: dict, session: AsyncSession) -> Dict[str, str]:
+
         old_data = await SelectQuery.join_three(session,
                                                 BaseUserModel, UserModel, InterestsModel,
                                                 BaseUserModel.uu_id == payload["sub"],
