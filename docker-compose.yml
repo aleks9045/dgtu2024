@@ -107,6 +107,8 @@ services:
       - "9997:9997"
     volumes:
       - ./mediamtx/mediamtx.yml:/mediamtx.yml
+      - ./mediamtx/webrts.key:/webrts.key
+      - ./mediamtx/webrts.crt:/webrts.key
     restart: unless-stopped
     networks:
       - media_network
