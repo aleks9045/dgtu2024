@@ -1,25 +1,25 @@
 services:
-#  alembic:
-#    container_name: alembic
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#    build:
-#      context: ./backend
-#      dockerfile: alembic.Dockerfile
-#    command:
-#      /bin/sh -c "alembic revision --autogenerate -m "initial" &&
-#      alembic upgrade head && python initializations.py"
-#    volumes:
-#      - ./backend/alembic/db_migrations/versions:/alembic/db_migrations/versions
-#    networks:
-#      - default
+  alembic:
+    container_name: alembic
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build:
+      context: ./backend
+      dockerfile: alembic.Dockerfile
+    command:
+      /bin/sh -c "alembic revision --autogenerate -m "initial" &&
+      alembic upgrade head && python initializations.py"
+    volumes:
+      - ./backend/alembic/db_migrations/versions:/alembic/db_migrations/versions
+    networks:
+      - default
 
   authorization:
     container_name: authorization
     depends_on:
-#      alembic:
-#        condition: service_completed_successfully
+      alembic:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
     build:
@@ -38,8 +38,8 @@ services:
   core:
     container_name: core
     depends_on:
-#      alembic:
-#        condition: service_completed_successfully
+      alembic:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
     build:
