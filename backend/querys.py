@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union, Any, List, Dict
 
 from sqlalchemy import inspect, select, delete
@@ -35,6 +36,7 @@ class BaseQuery:
                 temp_dct[col_names[col_num]] = data_row[col_num]
             res_lst.append(temp_dct)
             temp_dct = {}
+        print(res_lst)
         return res_lst
 
     @classmethod
