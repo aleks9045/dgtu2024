@@ -36,7 +36,7 @@ async def verify_token(token: Annotated[HTTPAuthorizationCredentials, Depends(se
 
 
 @router.get('/', summary="Get interests")
-async def get_interests(payload: str = Depends(verify_token),
+async def get_challenges(payload: str = Depends(verify_token),
                         session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
     return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
                                                                               BaseUserModel, UserModel, InterestsModel,

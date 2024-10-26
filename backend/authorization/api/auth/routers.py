@@ -101,7 +101,7 @@ async def delete_user(payload: dict = Depends(existing_user),
 async def delete_photo(payload: dict = Depends(existing_user),
                        photo: UploadFile = File(...),
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    file_path = 'media/user_photos/{photo.filename}'
+    file_path = f'{MEDIA_FOLDER}/user_photos/{photo.filename}'
     await Files.load(file_path, photo)
 
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
