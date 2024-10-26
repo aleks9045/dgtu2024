@@ -26,7 +26,7 @@ class BaseUserModel(Base):
 class UserModel(Base):
     __tablename__ = "user"
     id_u: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
-    points: Mapped[int] = Column(Integer, default=0)
+    points: Mapped[int] = Column(Integer, default=1)
     base_user: Mapped[int] = Column(Integer, ForeignKey('base_user.id_bu', ondelete="CASCADE"), unique=True,
                                     nullable=False)
 

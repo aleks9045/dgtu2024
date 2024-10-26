@@ -23,5 +23,4 @@ async def get_level(payload: dict = Depends(verify_token),
 @router.get('/all', summary="Get all levels")
 async def get_all_levels(payload: dict = Depends(verify_token),
                     session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    await LevelsSelectQuery.get_all_levels(session)
-    return JSONResponse(status_code=200, content={})
+    return JSONResponse(status_code=200, content=await LevelsSelectQuery.get_all_levels(session))

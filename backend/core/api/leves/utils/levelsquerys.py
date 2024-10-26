@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from sqlalchemy import insert, update, bindparam, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,10 +20,11 @@ class LevelsSelectQuery(SelectQuery):
 
 
     @classmethod
-    async def get_all_levels(cls, session: AsyncSession) -> dict[str, Any]:
+    async def get_all_levels(cls, session: AsyncSession) -> List[dict[str, Any]]:
         result = await session.execute((
             select(*BaseUserModel.public_columns, *UserModel.public_columns, LevelModel.id_l).select_from(BaseUserModel)
             .join(UserModel, BaseUserModel.id_bu == UserModel.base_user).join(LevelModel, UserModel.points <= LevelModel.required_points)
         ))
-        print(result.scalars().all())
-        return {}
+        col_names = tuple([*result._metadata.keys])
+        data = tuple(result.all())
+        return await cls.make_list_of_dicts(data, col_names)
