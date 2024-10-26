@@ -38,9 +38,7 @@ async def get_challenges(payload: str = Depends(verify_token),
 
 
 @router.get('/all', summary="Get all challenges")
-async def get_all_challenges(payload: str = Depends(verify_token),
-                             session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
+async def get_all_challenges(session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
     return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
                                                                               ChallengesModel, UserChallModel,
                                                                               UserModel,

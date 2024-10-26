@@ -13,6 +13,7 @@ class CallengesUpdateQuery(BaseQuery):
 
     @classmethod
     async def update_challenges(cls, new_data: dict, payload: dict, session: AsyncSession):
+
         await session.execute(
             update(ChallengesModel).where(
                 ChallengesModel.id_ch == await ApiSelectQuery.get_id_ch(payload, session)).values(
