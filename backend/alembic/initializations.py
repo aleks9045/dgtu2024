@@ -29,10 +29,11 @@ async def initialize_database_data():
         if not admin:
             await session.execute(text(
                 f"""
-                INSERT INTO base_user (uu_id, name, surname, email, password) VALUES
-                ('{str(uuid.uuid1())}', 'Админ', 'Админов', 'aleksey9045@gmail.com', '$2b$12$e3EPmbtAzRX6eEipyvTxaeBdyHE0MoATu8RJnymFrYY2Luh2cQPi6');
+                INSERT INTO base_user (uu_id, name, surname, email, password, is_admin) VALUES
+                ('{str(uuid.uuid1())}', 'Админ', 'Админов', 'aleksey9045@gmail.com', '$2b$12$e3EPmbtAzRX6eEipyvTxaeBdyHE0MoATu8RJnymFrYY2Luh2cQPi6', true);
                 """
             ))
+            await session.commit()
             await session.execute(text(
                 f"""
                 INSERT INTO admin (id_a, base_user) VALUES

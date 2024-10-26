@@ -9,7 +9,6 @@ class UserCreateSchema(BaseModel):
     email: EmailStr = Field(title="user's email", max_length=64)
     password: str = Field(title="user's password", max_length=64)
 
-    is_user: bool = Field(default=True)
     is_admin: bool = Field(default=False)
 
 

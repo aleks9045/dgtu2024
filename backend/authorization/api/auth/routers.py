@@ -32,13 +32,10 @@ async def create_user(schema: UserCreateSchema,
     schema = schema.model_dump()
     if await SelectQuery.exists(BaseUserModel, BaseUserModel.email == schema["email"], session):
         raise HTTPException(status_code=400, detail="Пользователь уже существует.")
-
-    if schema["is_user"]:
-        await UserInsertQuery.insert(UserModel, schema, session)
     elif schema["is_admin"]:
         await UserInsertQuery.insert(AdminModel, schema, session)
     else:
-        raise HTTPException(status_code=400, detail="Не указана роль пользователя.")
+        await UserInsertQuery.insert(UserModel, schema, session)
     return Response(status_code=201)
 
 
