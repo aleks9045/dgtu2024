@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import Column, Integer, VARCHAR, ForeignKey, DateTime, func, TIMESTAMP, BOOLEAN, UUID
 from sqlalchemy.orm import Mapped
 
-from config import MEDIA_FOLDER
+
 from database import db_session
 
 Base = db_session.base
