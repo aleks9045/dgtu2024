@@ -12,12 +12,6 @@ from querys import SelectQuery, BaseQuery
 Base = db_session.base
 
 
-class ChallengesInsertQuery(BaseQuery):
-    @classmethod
-    async def insert(cls, model: Base, schema: dict[str, Any], session: AsyncSession):
-        await session.execute(insert(model), await BaseQuery.make_one_dict_from_schema(model, schema))
-
-
 class ChallengesSelectQuery(SelectQuery):
 
     @classmethod
@@ -26,6 +20,19 @@ class ChallengesSelectQuery(SelectQuery):
         u_data = await SelectQuery.select(UserModel.id_u, UserModel.base_user == int(bu_data["id_bu"]), session)
         ch_data = await SelectQuery.select(UserChallModel.id_ch, UserChallModel.id_u == int(u_data["id_u"]), session)
         return int(ch_data["id_ch"])
+
+    @classmethod
+    async def get_id_u(cls, payload: dict, session: AsyncSession) -> int:
+        bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
+        u_data = await SelectQuery.select(UserModel.id_u, UserModel.base_user == int(bu_data["id_bu"]), session)
+        return int(u_data["id_u"])
+
+
+class ChallengesInsertQuery(BaseQuery):
+    @classmethod
+    async def insert(cls, model: Base, schema: dict[str, Any], payload: dict, session: AsyncSession):
+        schema["id_u"] = await ChallengesSelectQuery.get_id_u(payload, session)
+        await session.execute(insert(model), await BaseQuery.make_one_dict_from_schema(model, schema))
 
 
 class ChallengesUpdateQuery(BaseQuery):

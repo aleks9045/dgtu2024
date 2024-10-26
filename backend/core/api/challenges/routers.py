@@ -6,7 +6,8 @@ from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, ChallengesByEmailsSchema
+from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, ChallengesByEmailsSchema, \
+    ChallengesAddUserSchema
 from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery
 from database import db_session
 from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel
@@ -65,6 +66,14 @@ async def patch_challenges(schema: ChallengePatchSchema,
     schema = schema.model_dump()
     new_data = await ChallengesUpdateQuery.merge_new_n_old(schema, session)
     await ChallengesUpdateQuery.update_challenges(new_data, session)
+    return Response(status_code=200)
+
+@router.post('/add_user', summary="Add_user to challenge")
+async def add_user(schema: ChallengesAddUserSchema,
+                           payload: dict = Depends(verify_token),
+                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+    schema = schema.model_dump()
+    await ChallengesInsertQuery.insert(UserChallModel, schema, payload, session)
     return Response(status_code=200)
 
 
