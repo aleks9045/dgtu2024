@@ -39,7 +39,7 @@ async def get_challenges_by_user(payload: dict = Depends(verify_token),
                                                                               columns1=ChallengesModel.public_columns,
                                                                               columns3=UserModel.public_columns
                                                                               ))
-@router.get('/users_by_challenges', summary="Get users by challenges")
+@router.post('/users_by_challenges', summary="Get users by challenges")
 async def get_challenges_by_user(schema: ChallengesIdSchema,
         payload: dict = Depends(verify_token),
                          session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
@@ -100,7 +100,8 @@ async def add_achievement(schema: AchievementsIdSchema,
                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
     id_gach = await ChallengesInsertQuery.insert_with_payload(GAchUserModel, schema, payload, session)
-    print(id_gach)
+    id_gach = id_gach.scalars().one()
+    print(id_gach.id_uach)
     return Response(status_code=200)
 
 
