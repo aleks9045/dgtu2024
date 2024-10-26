@@ -26,9 +26,8 @@ async def existing_user(payload: dict = Depends(token.check),
     return payload
 
 
-@router.post('/register', summary="Create new user",
-             description=f"data field: \n\n```\n\n {SchemaUtils.generate_example(UserCreateSchema)} \n\n```")
-async def create_user(schema: UserCreateSchema = Depends(Checker(UserCreateSchema)),
+@router.post('/register', summary="Create new user")
+async def create_user(schema: UserCreateSchema,
                       session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
     if await SelectQuery.exists(BaseUserModel, BaseUserModel.email == schema["email"], session):

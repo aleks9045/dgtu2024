@@ -35,7 +35,6 @@ class BaseQuery:
                 temp_dct[col_names[col_num]] = data_row[col_num]
             res_lst.append(temp_dct)
             temp_dct = {}
-        print(res_lst)
         return res_lst
 
     @classmethod
@@ -101,7 +100,6 @@ class SelectQuery(BaseQuery):
 
         col_names = tuple([*result._metadata.keys])
         data = tuple(result.fetchall())
-        print(data)
         return await cls.make_list_of_dicts(data, col_names)
 
     @classmethod
