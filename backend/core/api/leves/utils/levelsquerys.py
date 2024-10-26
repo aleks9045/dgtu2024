@@ -16,7 +16,7 @@ class LevelsSelectQuery(SelectQuery):
         bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
         u_data = await SelectQuery.select(UserModel.points, UserModel.base_user == int(bu_data["id_bu"]), session)
         level = await session.execute(select(LevelModel.id_l).where(LevelModel.required_points <= int(u_data["points"])))
-        return {"level": level}
+        return {"level": level.scalar()}
 
 
     @classmethod

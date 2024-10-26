@@ -46,8 +46,8 @@ async def create_challenges(schema: InterestCreateChema,
     return Response(status_code=201)
 
 
-@router.patch('/', summary="Patch interests")
-async def create_interests(schema: InterestPatchChema,
+@router.patch('/', summary="Patch challenges")
+async def patch_challenges(schema: InterestPatchChema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
