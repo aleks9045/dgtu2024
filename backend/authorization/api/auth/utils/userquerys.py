@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.auth.utils.jwt_utils import password
 from api.auth.utils.router_utils import Files
 from config import MEDIA_FOLDER
-from models import BaseUserModel, AdminModel, UserModel
+from models import BaseUserModel, AdminModel, UserModel, InterestsModel
 from database import db_session
 from querys import SelectQuery, BaseQuery, DeleteQuery
 
@@ -58,7 +58,12 @@ class UserInsertQuery(BaseQuery):
         u_data = await cls.make_one_dict_from_schema(model, schema)
         u_data['base_user'] = id_bu
 
-        await session.execute(insert(model), u_data)
+
+
+        id_u = await session.execute(insert(model).returning(UserModel.id_u), u_data)
+
+        schema["id_u"] = int(id_u.scalars().one())
+        await session.execute(insert(InterestsModel), schema)
 
 
 

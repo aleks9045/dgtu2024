@@ -18,12 +18,6 @@ class InterestsSelectQuery(SelectQuery):
         return int(u_data["id_u"])
 
 
-class InterestsInsertQuery(BaseQuery):
-    @classmethod
-    async def insert(cls, model: Base, schema: dict[str, Any], payload: dict, session: AsyncSession):
-        schema["id_u"] = await InterestsSelectQuery.get_id_u(payload, session)
-        await session.execute(insert(model), await BaseQuery.make_one_dict_from_schema(model, schema))
-
 
 class InterestsUpdateQuery(BaseQuery):
     @classmethod
