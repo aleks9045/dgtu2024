@@ -3,6 +3,7 @@ import datetime
 from sqlalchemy import Column, Integer, VARCHAR, ForeignKey, DateTime, func, TIMESTAMP, BOOLEAN, UUID
 from sqlalchemy.orm import Mapped
 
+from config import MEDIA_FOLDER
 from database import db_session
 
 Base = db_session.base
@@ -17,7 +18,7 @@ class BaseUserModel(Base):
 
     email: Mapped[str] = Column(VARCHAR(64), nullable=False, unique=True)
     password: Mapped[str] = Column(VARCHAR(1024), nullable=False)
-    photo: Mapped[str] = Column(VARCHAR(255), nullable=True, default=f'/media/user_photos/default.png')
+    photo: Mapped[str] = Column(VARCHAR(255), nullable=True, default=f'/authorization/user_photos/default.png')
 
     public_columns = (id_bu, name, surname, email, photo)
 
