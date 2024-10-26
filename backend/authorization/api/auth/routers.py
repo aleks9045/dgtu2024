@@ -105,7 +105,7 @@ async def delete_photo(payload: dict = Depends(existing_user),
     await Files.load(file_path, photo)
 
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
-        photo=f'/media/user_photos/{file_path}'))
+        photo=f'/media/user_photos/{photo.filename}'))
 
     return Response(status_code=200)
 
