@@ -23,6 +23,8 @@ class UserSelectQuery(SelectQuery):
                                   session,
                                   columns1=BaseUserModel.public_columns,
                                   columns2=UserModel.public_columns)
+        if not data:
+            return await cls.get_admin(payload, session)
         return data[0]
 
 

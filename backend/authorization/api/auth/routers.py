@@ -75,6 +75,7 @@ async def logout() -> Response:
 @router.get('/user', summary="Get information about user")
 async def get_user(payload: dict = Depends(existing_user),
                    session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+
     return JSONResponse(status_code=200, content=await UserSelectQuery.get_user(payload, session))
 
 

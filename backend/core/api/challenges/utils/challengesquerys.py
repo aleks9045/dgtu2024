@@ -10,13 +10,19 @@ from querys import SelectQuery, BaseQuery
 Base = db_session.base
 
 
-class InterestsSelectQuery(SelectQuery):
+class ChallengesSelectQuery(SelectQuery):
     @classmethod
     async def get_id_u(cls, payload: dict, session: AsyncSession) -> int:
         bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
         u_data = await SelectQuery.select(UserModel.id_u, UserModel.base_user == int(bu_data["id_bu"]), session)
         return int(u_data["id_u"])
 
+
+class ChallengesInsertQuery(BaseQuery):
+    @classmethod
+    async def insert(cls, model: Base, schema: dict[str, Any], payload: dict, session: AsyncSession):
+        schema["id_u"] = await ChallengesSelectQuery.get_id_u(payload, session)
+        await session.execute(insert(model), await BaseQuery.make_one_dict_from_schema(model, schema))
 
 
 class InterestsUpdateQuery(BaseQuery):
