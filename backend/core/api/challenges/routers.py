@@ -36,8 +36,7 @@ async def get_challenges_by_user(payload: dict = Depends(verify_token),
                                                                               UserChallModel.id_u,
                                                                               UserModel.id_u,
 
-                                                                              columns1=ChallengesModel.public_columns,
-                                                                              columns3=UserModel.public_columns
+                                                                              columns1=ChallengesModel.public_columns
                                                                               ))
 @router.post('/users_by_challenges', summary="Get users by challenges")
 async def get_challenges_by_user(schema: ChallengesIdSchema,
@@ -54,7 +53,6 @@ async def get_challenges_by_user(schema: ChallengesIdSchema,
                                                                               UserChallModel.id_u,
                                                                               UserModel.id_u,
 
-                                                                              columns1=ChallengesModel.public_columns,
                                                                               columns3=UserModel.public_columns
                                                                               ))
 
