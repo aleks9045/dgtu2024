@@ -1,18 +1,15 @@
-from typing import Any, Dict
-
 from sqlalchemy import update, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.apiquerys import ApiSelectQuery
 from database import db_session
-from models import BaseUserModel, UserModel, InterestsModel, ChallengesModel
-from querys import SelectQuery, BaseQuery
+from models import ChallengesModel
+from querys import BaseQuery
 
 Base = db_session.base
 
 
 class CallengesUpdateQuery(BaseQuery):
-
 
     @classmethod
     async def update_challenges(cls, new_data: dict, payload: dict, session: AsyncSession):
