@@ -33,7 +33,7 @@ app.add_middleware(
 
 app.include_router(api_auth_router)
 
-app.mount("/media", StaticFiles(directory=MEDIA_FOLDER, check_dir=True))
+app.mount("/authorization/media", StaticFiles(directory=MEDIA_FOLDER, check_dir=True))
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="0.0.0.0", port=8000, log_level="info")

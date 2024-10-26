@@ -105,8 +105,8 @@ async def load_photo(payload: dict = Depends(existing_user),
     await Files.load(file_path, photo)
     print(photo.filename)
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
-        photo=f'/media/user_photos/{photo.filename}'))
-    print(f'/media/user_photos/{photo.filename}')
+        photo=f'/{MEDIA_FOLDER}/user_photos/{photo.filename}'))
+    print(f'/{MEDIA_FOLDER}/user_photos/{photo.filename}')
     return Response(status_code=200)
 
 @router.patch('/photo', summary="Patch user's photo")
@@ -118,7 +118,7 @@ async def patch_photo(payload: dict = Depends(existing_user),
     await Files.load(file_path, photo)
 
     await session.execute(update(BaseUserModel).where(BaseUserModel.uu_id == payload["sub"]).values(
-        photo=f'media/user_photos/{file_path}'))
+        photo=f'/{MEDIA_FOLDER}/user_photos/{file_path}'))
 
     return Response(status_code=200)
 

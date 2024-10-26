@@ -102,5 +102,5 @@ class UserDeleteQuery(DeleteQuery):
     @classmethod
     async def delete_photo(cls, payload: dict, session: AsyncSession):
         user_photo = await SelectQuery.select(BaseUserModel.photo, BaseUserModel.uu_id == payload["sub"], session)
-        if user_photo["photo"] != f'{MEDIA_FOLDER}/user_photos/default.png':
+        if user_photo["photo"] != f'/{MEDIA_FOLDER}/user_photos/default.png':
             await Files.delete(user_photo["photo"])
