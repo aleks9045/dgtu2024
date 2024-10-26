@@ -30,8 +30,9 @@ class UserModel(Base):
     points: Mapped[int] = Column(Integer, default=0)
     base_user: Mapped[int] = Column(Integer, ForeignKey('base_user.id_bu', ondelete="CASCADE"), unique=True,
                                     nullable=False)
+    team: Mapped[str] = Column(VARCHAR, nullable=True)
 
-    public_columns = (id_u, points)
+    public_columns = (id_u, points, team)
 
 
 class AdminModel(Base):

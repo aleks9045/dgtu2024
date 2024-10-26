@@ -59,7 +59,7 @@ class InterestsUpdateQuery(BaseQuery):
     @classmethod
     async def update_interests(cls, new_data: dict, payload: dict, session: AsyncSession):
         await session.execute(
-            update(InterestsModel).where(InterestsModel.id_u == await ApiSelectQuery.get_id_u(payload, session)).values(
+            update(InterestsModel).where(InterestsModel.id_u == await InterestsSelectQuery.get_id_u(payload, session)).values(
                 sport=bindparam("sport"),
                 cooking=bindparam("cooking"),
                 art=bindparam("art"),

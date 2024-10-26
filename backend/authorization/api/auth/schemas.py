@@ -8,7 +8,7 @@ class UserCreateSchema(BaseModel):
     surname: str = Field(title="user's surname", max_length=32)
     email: EmailStr = Field(title="user's email", max_length=64)
     password: str = Field(title="user's password", max_length=64)
-
+    team: str = Field(title="user's team", max_length=64)
     is_admin: bool = Field(default=False)
 
 
@@ -22,6 +22,7 @@ class UserPatchSchema(BaseModel):
     last_name: Optional[str] = Field(default=None)
     father_name: Optional[str] = Field(default=None)
     points: Optional[int] = Field(default=None)
+    team: Optional[str] = Field(default=None)
     is_user: bool = Field(default=True)
 
 

@@ -4,7 +4,7 @@ from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.interests.schemas import InterestCreateChema, InterestPatchChema
+from api.interests.schemas import InterestCreateSchema, InterestPatchSchema
 from api.interests.utils.interestsquerys import InterestsUpdateQuery, InterestsInsertQuery
 from database import db_session
 from models import BaseUserModel, UserModel, InterestsModel
@@ -33,7 +33,7 @@ async def get_interests(payload: str = Depends(verify_token),
                                                                               InterestsModel.public_columns))
 
 @router.post('/', summary="Post interests")
-async def create_interests(schema: InterestCreateChema,
+async def create_interests(schema: InterestCreateSchema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
@@ -42,9 +42,9 @@ async def create_interests(schema: InterestCreateChema,
 
 
 @router.patch('/', summary="Patch interests")
-async def patch_interests(schema: InterestPatchChema,
-                           payload: dict = Depends(verify_token),
-                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+async def patch_interests(schema: InterestPatchSchema,
+                          payload: dict = Depends(verify_token),
+                          session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
     new_data = await InterestsUpdateQuery.merge_new_n_old(schema, payload, session)
     await InterestsUpdateQuery.update_interests(new_data, payload, session)

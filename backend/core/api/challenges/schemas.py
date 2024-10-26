@@ -17,7 +17,7 @@ class ChallengeCreateSchema(BaseModel):
     points: int = Field(title="Achievement")
 
 
-class ChallengePatchChema(BaseModel):
+class ChallengePatchSchema(BaseModel):
     id_ch: int
     name: Optional[str] = Field(default=None)
     desc: Optional[str] = Field(default=None)

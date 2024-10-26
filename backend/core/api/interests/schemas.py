@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 
-class InterestCreateChema(BaseModel):
+class InterestCreateSchema(BaseModel):
     sport: bool
     cooking: bool
     art: bool
@@ -18,7 +18,7 @@ class InterestCreateChema(BaseModel):
 
 
 
-class InterestPatchChema(BaseModel):
+class InterestPatchSchema(BaseModel):
     sport: Optional[bool] = Field(default=None)
     cooking: Optional[bool] = Field(default=None)
     art: Optional[bool] = Field(default=None)

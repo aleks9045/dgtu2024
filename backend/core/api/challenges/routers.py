@@ -4,7 +4,7 @@ from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchChema
+from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema
 from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery
 from database import db_session
 from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel
@@ -18,7 +18,7 @@ router = APIRouter(
 
 
 @router.get('/', summary="Get challenges")
-async def get_challenges(payload: str = Depends(verify_token),
+async def get_challenges(payload: dict = Depends(verify_token),
                          session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
     bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
     return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
@@ -55,7 +55,7 @@ async def create_challenges(schema: ChallengeCreateSchema,
 
 
 @router.patch('/', summary="Patch challenges")
-async def patch_challenges(schema: ChallengePatchChema,
+async def patch_challenges(schema: ChallengePatchSchema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
