@@ -11,6 +11,5 @@ COPY alembic/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY alembic/ .
-COPY authorization/models authorization/models
-COPY core/models core/models
+COPY models/ models/
 COPY database.py database.py

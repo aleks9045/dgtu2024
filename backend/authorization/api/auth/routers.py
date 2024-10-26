@@ -139,5 +139,5 @@ async def all_user(session: AsyncSession = Depends(db_session.get_async_session)
 
 
 @router.get('/token_check', summary="Check JWT token")
-async def all_user(payload: dict = Depends(existing_user)) -> Response:
-    return Response(status_code=200)
+async def check_token(payload: dict = Depends(existing_user)) -> JSONResponse:
+    return JSONResponse(status_code=200, content=payload)

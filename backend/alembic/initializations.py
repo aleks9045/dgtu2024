@@ -1,12 +1,11 @@
 import asyncio
-import datetime
 import uuid
 
 from sqlalchemy import select, text, func
 
 from database import db_session
-from authorization.models import  AdminModel
-from core.models import LevelModel
+from models import  AdminModel
+from models import LevelModel
 
 
 async def initialize_database_data():

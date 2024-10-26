@@ -8,6 +8,7 @@ from database import db_session
 
 Base = db_session.base
 
+
 class BaseQuery:
     @classmethod
     def get_columns_names(cls, model: Base) -> list[str]:
@@ -48,7 +49,7 @@ class SelectQuery(BaseQuery):
 
     @classmethod
     async def select(cls, columns: Base, condition: bool,
-                         session: AsyncSession) -> Dict[str, str]:
+                     session: AsyncSession) -> Dict[str, str]:
         result = await session.execute(select(columns).where(condition))
         col_names = tuple([*result._metadata.keys])
         data = result.fetchone()
@@ -76,6 +77,19 @@ class SelectQuery(BaseQuery):
         else:
             query = select(*model1.__table__.columns, *model2.__table__.columns).where(condition).join(model1,
                                                                                                        col1 == col2)
+        result = await session.execute(query)
+        col_names = tuple([*result._metadata.keys])
+        data = tuple(result.fetchall())
+        return await cls.make_list_of_dicts(data, col_names)
+
+    @classmethod
+    async def join_three(cls, model1: Base, model2: Base, model3: Base, condition: bool,
+                   col1: Union[InstrumentedAttribute, Any],
+                   col2: Union[InstrumentedAttribute, Any],
+                   col3: Union[InstrumentedAttribute, Any],
+                   session: AsyncSession, columns1: tuple = (), columns2: tuple = (), columns3 = ()):
+        query = select(columns1, columns2, columns3).where(condition).join(model2, col1 == col2).join(model3, col2 == col3)
+
         result = await session.execute(query)
         col_names = tuple([*result._metadata.keys])
         data = tuple(result.fetchall())

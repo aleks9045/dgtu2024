@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from config import POSTGRES_USER, PORT, POSTGRES_PASSWORD, HOST, POSTGRES_DB
 from database import db_session
-from authorization.models import *
-from core.models import *
+from models import *
+
 Base = db_session.base
 target_metadata = [Base.metadata]
 
