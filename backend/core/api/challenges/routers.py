@@ -59,6 +59,6 @@ async def patch_challenges(schema: ChallengePatchSchema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    new_data = await ChallengesUpdateQuery.merge_new_n_old(schema, payload, session)
-    await ChallengesUpdateQuery.update_challenges(new_data, payload, session)
+    new_data = await ChallengesUpdateQuery.merge_new_n_old(schema, session)
+    await ChallengesUpdateQuery.update_challenges(new_data, session)
     return Response(status_code=200)

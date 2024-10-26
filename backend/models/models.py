@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, VARCHAR, ForeignKey, DateTime, func, TIMESTAMP, BOOLEAN, UUID
+from sqlalchemy import Column, Integer, VARCHAR, ForeignKey, DateTime, func, TIMESTAMP, BOOLEAN, UUID, BigInteger
 from sqlalchemy.orm import Mapped
 
 
@@ -66,10 +66,12 @@ class GoalsModel(Base):
     id_g: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = Column(VARCHAR(32), nullable=False)
     desc: Mapped[str] = Column(VARCHAR(255), nullable=True)
-    name: Mapped[str] = Column(VARCHAR(32), nullable=False)
+    start: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False)
+    end: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False)
+    status: Mapped[str] = Column(VARCHAR, nullable=True)
     id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), nullable=False)
 
-    public_columns = (id_g, name, desc)
+    public_columns = (id_g, name, desc, start, end, status)
 
 
 class LocalAchievementsModel(Base):
@@ -117,7 +119,10 @@ class ChallengesModel(Base):
     accepted: Mapped[bool] = Column(BOOLEAN, nullable=False)
     creator: Mapped[str] = Column(VARCHAR, nullable=False)
 
-    public_columns = (id_ch, name, desc, start, end, type, accepted, creator)
+    steps: Mapped[int] = Column(Integer, nullable=True)
+    sleep_millis: Mapped[int] = Column(BigInteger, nullable=True)
+
+    public_columns = (id_ch, name, desc, start, end, type, accepted, creator, interest, steps, sleep_millis)
 
 
 class UserChallModel(Base):
