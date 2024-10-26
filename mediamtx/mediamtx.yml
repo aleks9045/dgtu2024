@@ -380,8 +380,8 @@ webrtcAdditionalHosts: []
 webrtcICEServers2: 
   - url: stun:89.46.131.17:3478  # Use your external IP and STUN port
   - url: turn:89.46.131.17:3478  # TURN server with authentication
-    username: ''
-    password: ''
+    username: root
+    password: root
   # clientOnly: false
 # Time to wait for the WebRTC handshake to complete.
 webrtcHandshakeTimeout: 10s
