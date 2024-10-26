@@ -1,20 +1,24 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field
 
 
 
-class InterestCreateChema(BaseModel):
-    sport: bool
-    cooking: bool
-    art: bool
-    tech: bool
-    communication: bool
-    literature: bool
-    animals: bool
-    games: bool
-    music: bool
-    films: bool
+class ChallengeCreateSchema(BaseModel):
+    id_ch: int
+    name: str
+    desc: str
+    rules: str
+    status: str
+    points: int
+    created_at: datetime
+    start: datetime
+    end: datetime
+    photo: Optional[str] = None
+    file: Optional[str] = None
+    accepted: bool
+    type: str
 
 
 

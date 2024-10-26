@@ -42,6 +42,7 @@ class UserSelectQuery(SelectQuery):
                                   session,
                                   columns1=BaseUserModel.public_columns,
                                   columns2=UserModel.public_columns)
+
         return data
 
 

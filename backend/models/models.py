@@ -20,7 +20,7 @@ class BaseUserModel(Base):
     photo: Mapped[str] = Column(VARCHAR(255), nullable=True, default=f'/media/user_photos/default.png')
     created_at: Mapped[datetime] = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    public_columns = (name, surname, email, photo, created_at)
+    public_columns = (id_bu, name, surname, email, photo, created_at)
 
 
 class UserModel(Base):
@@ -55,14 +55,18 @@ class InterestsModel(Base):
     films: Mapped[bool] = Column(BOOLEAN, nullable=False)
     id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), unique=True, nullable=False)
 
+    public_columns = (sport, cooking, art, tech, communication, literature, animals, games, music, films)
+
 
 
 class GoalsModel(Base):
     __tablename__ = "goals"
     id_g: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = Column(VARCHAR(32), nullable=False)
-    desc: Mapped[str] = Column(VARCHAR(255), nullable=False)
+    desc: Mapped[str] = Column(VARCHAR(255), nullable=True)
     id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), nullable=False)
+
+    public_column = (id_g, name, desc)
 
 
 class LocalAchievementsModel(Base):
@@ -72,6 +76,8 @@ class LocalAchievementsModel(Base):
     title: Mapped[str] = Column(VARCHAR(32), nullable=False)
     id_u: Mapped[int] = Column(Integer, ForeignKey('goals.id_g'), nullable=False)
 
+    public_column = (id_lach, title)
+
 
 class LevelModel(Base):
     __tablename__ = "level"
@@ -79,11 +85,14 @@ class LevelModel(Base):
     required_points: Mapped[int] = Column(Integer, nullable=False)
 
 
+
 class GlobalAchievementsModel(Base):
     __tablename__ = 'global_achievements'
     id_gach: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     title: Mapped[str] = Column(VARCHAR, nullable=False)
     points: Mapped[int] = Column(Integer, nullable=False)
+
+    public_colums = (id_gach, title, points)
 
 
 class GAchUserModel(Base):
@@ -107,6 +116,8 @@ class ChallengesModel(Base):
     photo: Mapped[str] = Column(VARCHAR, nullable=True)
     file: Mapped[str] = Column(VARCHAR, nullable=True)
     accepted: Mapped[bool] = Column(BOOLEAN, nullable=False)
+
+    public_columns = (id_ch, name, desc, rules, status, points, created_at, start, end, photo, file, accepted)
 
 
 class UserChallModel(Base):

@@ -22,7 +22,7 @@ class UserPatchSchema(BaseModel):
     first_name: Optional[str] = Field(default=None)
     last_name: Optional[str] = Field(default=None)
     father_name: Optional[str] = Field(default=None)
-    about: Optional[str] = Field(default=None)
+    points: Optional[int] = Field(default=None)
     is_user: bool = Field(default=True)
 
 

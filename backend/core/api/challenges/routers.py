@@ -1,60 +1,44 @@
-from typing import Annotated
-
-import httpx
 from fastapi import Depends
-from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from sqlalchemy import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
 from api.interests.schemas import InterestCreateChema, InterestPatchChema
 from api.interests.utils.interestsquerys import InterestsInsertQuery, InterestsUpdateQuery
 from database import db_session
-from models import BaseUserModel, UserModel, InterestsModel
-from querys import SelectQuery, BaseQuery
+from models import BaseUserModel, UserModel, InterestsModel, ChallengesModel, UserChallModel
+from querys import SelectQuery
+from veryfication import verify_token
 
 router = APIRouter(
-    prefix="/interests",
-    tags=["Interests"]
+    prefix="/challenges",
+    tags=["Challenges"]
 )
 
-security = HTTPBearer(auto_error=True)
 
-
-async def verify_token(token: Annotated[HTTPAuthorizationCredentials, Depends(security)]):
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            "http://authorization:8000/auth/token_check",
-            headers={"Authorization": f"Bearer {token.credentials}"}
-        )
-        if response.status_code != 200:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return response.json()
-
-
-@router.get('/', summary="Get interests")
+@router.get('/', summary="Get challenges")
 async def get_challenges(payload: str = Depends(verify_token),
-                        session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+                         session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+    bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
     return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
-                                                                              BaseUserModel, UserModel, InterestsModel,
-                                                                              BaseUserModel.uu_id == payload["sub"],
+                                                                              ChallengesModel, UserChallModel,
+                                                                              UserModel,
+                                                                              UserModel.id_bu == bu_data["id_bu"],
 
-                                                                              BaseUserModel.id_bu,
-                                                                              UserModel.base_user,
+                                                                              ChallengesModel.id_ch,
+                                                                              UserChallModel.id_ch,
 
+                                                                              UserChallModel.id_u,
                                                                               UserModel.id_u,
-                                                                              InterestsModel.id_u,
 
-                                                                              BaseUserModel.public_columns,
-                                                                              UserModel.public_columns,
-                                                                              InterestsModel.__table__.columns))
+                                                                              columns1=ChallengesModel.public_columns,
+                                                                              columns3=UserModel.public_columns
+                                                                              ))
 
 
-@router.post('/', summary="Post interests")
-async def create_interests(schema: InterestCreateChema,
+@router.post('/', summary="Post challenges")
+async def create_challenges(schema: InterestCreateChema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()

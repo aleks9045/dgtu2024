@@ -99,6 +99,7 @@ class SelectQuery(BaseQuery):
 
         col_names = tuple([*result._metadata.keys])
         data = tuple(result.fetchall())
+        print(data)
         return await cls.make_list_of_dicts(data, col_names)
 
     @classmethod
