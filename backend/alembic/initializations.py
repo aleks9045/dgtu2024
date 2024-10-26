@@ -30,7 +30,7 @@ async def initialize_database_data():
             await session.execute(text(
                 f"""
                 INSERT INTO base_user (uu_id, name, surname, email, password, created_at) VALUES
-                ('{str(uuid.uuid1())}', 'Админ', 'Админов', 'aleksey9045@gmail.com', '$2b$12$e3EPmbtAzRX6eEipyvTxaeBdyHE0MoATu8RJnymFrYY2Luh2cQPi6', {func.now()});
+                ('{str(uuid.uuid1())}', 'Админ', 'Админов', 'aleksey9045@gmail.com', '$2b$12$e3EPmbtAzRX6eEipyvTxaeBdyHE0MoATu8RJnymFrYY2Luh2cQPi6');
                 """
             ))
             await session.execute(text(
