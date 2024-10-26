@@ -76,16 +76,21 @@ services:
     restart: always
     networks:
       - default
-#  go:
-#    build:
-#      context: ./backend/go
-#      dockerfile: go.Dockerfile
-#    container_name: go
-#    ports:
-#      - "8083:8083"
-#      - "8053:8053"
-#    networks:
-#      - default
+  go:
+    build:
+      context: ./backend/go
+      dockerfile: go.Dockerfile
+    container_name: go
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+      - "8053:8053"
+    networks:
+      - default
+    env_file:
+      - backend/go/.env
 #  redis:
 #    image: redis:7.2.4-alpine
 #    container_name: redis

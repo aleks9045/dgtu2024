@@ -1,4 +1,4 @@
-from models import ChallengesModel, GlobalAchievementsModel
+from models import ChallengesModel, GlobalAchievementsModel, GoalsModel
 from typing import Any, Dict
 
 from sqlalchemy import update, bindparam, select, insert
@@ -29,15 +29,13 @@ class GoalsInsertQuery(BaseQuery):
 
 class GoalsUpdateQuery(BaseQuery):
     @classmethod
-    async def merge_new_n_old(cls, schema: dict[str, Any], payload: dict, session: AsyncSession) -> Dict[str, str]:
+    async def merge_new_n_old(cls, schema: dict[str, Any], session: AsyncSession) -> Dict[str, str]:
         old_data = await session.execute(
-            select(*ChallengesModel.public_columns, *GlobalAchievementsModel.public_colums).where(ChallengesModel.id_ch == schema["id_ch"]).join(GlobalAchievementsModel, GlobalAchievementsModel.id_gach == ChallengesModel.id_ch))
+            select(*GoalsModel.public_columns).where(GoalsModel.id_g == schema["id_g"]))
         col_names = tuple([*old_data._metadata.keys])
         data = old_data.fetchone()
 
         old_data = await cls.make_dict(data, col_names)
-        print(col_names)
-        print(old_data)
         for key, value in schema.items():
             if schema[key] is None:
                 try:
@@ -50,24 +48,12 @@ class GoalsUpdateQuery(BaseQuery):
         return schema
 
     @classmethod
-    async def update_challenges(cls, new_data: dict, payload: dict, session: AsyncSession):
-
+    async def update_goals(cls, new_data: dict, session: AsyncSession):
         await session.execute(
-            update(ChallengesModel).where(
-                ChallengesModel.id_ch == new_data["id_ch"]).values(
+            update(GoalsModel).where(
+                GoalsModel.id_g == new_data["id_g"]).values(
                 name=bindparam("name"),
                 desc=bindparam("desc"),
-                start=bindparam("start"),
-                end=bindparam("end"),
-                accepted=bindparam("accepted"),
-                type=bindparam("type"),
-                creator=bindparam("creator")
-            ),
-            new_data)
-        await session.execute(
-            update(GlobalAchievementsModel).where(
-                GlobalAchievementsModel.id_gach == new_data["id_ch"]).values(
-                title=bindparam("title"),
-                points=bindparam("points")
+                status=bindparam("status")
             ),
             new_data)

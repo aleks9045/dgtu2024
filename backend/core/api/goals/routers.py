@@ -4,8 +4,8 @@ from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.goals.schemas import GoalsCreateSchema
-from api.goals.utils.goalsquerys import GoalsSelectQuery, GoalsInsertQuery
+from api.goals.schemas import GoalsCreateSchema, GoalsPatchSchema
+from api.goals.utils.goalsquerys import GoalsSelectQuery, GoalsInsertQuery, GoalsUpdateQuery
 from api.interests.schemas import InterestCreateSchema, InterestPatchSchema
 from api.interests.utils.interestsquerys import InterestsUpdateQuery
 from database import db_session
@@ -40,15 +40,14 @@ async def create_goals(schema: GoalsCreateSchema,
                            payload: dict = Depends(verify_token),
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    await GoalsInsertQuery.insert(InterestsModel, schema, payload, session)
+    await GoalsInsertQuery.insert(GoalsModel, schema, payload, session)
     return Response(status_code=201)
 
 
 @router.patch('/', summary="Patch goals")
-async def create_goals(schema: InterestPatchSchema,
-                       payload: dict = Depends(verify_token),
+async def create_goals(schema: GoalsPatchSchema,
                        session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    new_data = await InterestsUpdateQuery.merge_new_n_old(schema, payload, session)
-    await InterestsUpdateQuery.update_interests(new_data, payload, session)
+    new_data = await GoalsUpdateQuery.merge_new_n_old(schema, session)
+    await GoalsUpdateQuery.update_goals(new_data, session)
     return Response(status_code=200)

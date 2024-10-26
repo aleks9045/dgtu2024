@@ -66,9 +66,10 @@ class GoalsModel(Base):
     id_g: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = Column(VARCHAR(32), nullable=False)
     desc: Mapped[str] = Column(VARCHAR(255), nullable=True)
+    name: Mapped[str] = Column(VARCHAR(32), nullable=False)
     id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), nullable=False)
 
-    public_column = (id_g, name, desc)
+    public_columns = (id_g, name, desc)
 
 
 class LocalAchievementsModel(Base):
@@ -112,6 +113,7 @@ class ChallengesModel(Base):
     start: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False)
     end: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False)
     type: Mapped[str] = Column(VARCHAR, nullable=False)
+    interest: Mapped[str] = Column(VARCHAR, nullable=False)
     accepted: Mapped[bool] = Column(BOOLEAN, nullable=False)
     creator: Mapped[str] = Column(VARCHAR, nullable=False)
 

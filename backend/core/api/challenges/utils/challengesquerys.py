@@ -14,7 +14,7 @@ Base = db_session.base
 
 class ChallengesInsertQuery(BaseQuery):
     @classmethod
-    async def insert(cls, model: Base, schema: dict[str, Any], payload: dict, session: AsyncSession):
+    async def insert(cls, model: Base, schema: dict[str, Any], session: AsyncSession):
         await session.execute(insert(model), await BaseQuery.make_one_dict_from_schema(model, schema))
 
 
@@ -31,7 +31,7 @@ class ChallengesSelectQuery(SelectQuery):
 class ChallengesUpdateQuery(BaseQuery):
 
     @classmethod
-    async def merge_new_n_old(cls, schema: dict[str, Any], payload: dict, session: AsyncSession) -> Dict[str, str]:
+    async def merge_new_n_old(cls, schema: dict[str, Any], session: AsyncSession) -> Dict[str, str]:
         old_data = await session.execute(
             select(*ChallengesModel.public_columns, *GlobalAchievementsModel.public_colums).where(ChallengesModel.id_ch == schema["id_ch"]).join(GlobalAchievementsModel, GlobalAchievementsModel.id_gach == ChallengesModel.id_ch))
         col_names = tuple([*old_data._metadata.keys])
@@ -52,7 +52,7 @@ class ChallengesUpdateQuery(BaseQuery):
         return schema
 
     @classmethod
-    async def update_challenges(cls, new_data: dict, payload: dict, session: AsyncSession):
+    async def update_challenges(cls, new_data: dict, session: AsyncSession):
 
         await session.execute(
             update(ChallengesModel).where(

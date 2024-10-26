@@ -12,6 +12,7 @@ class ChallengeCreateSchema(BaseModel):
     end: Optional[datetime]
     accepted: bool = Field(default=False)
     type: Optional[str]
+    interest: str
     creator: str
     title: str = Field(title="Achievement")
     points: int = Field(title="Achievement")
@@ -25,6 +26,7 @@ class ChallengePatchSchema(BaseModel):
     end: Optional[datetime] = Field(default=None)
     accepted: Optional[bool] = Field(default=False)
     type: Optional[str] = Field(default=None)
+    interest: str
     creator: Optional[str] = Field(default=None)
     title: Optional[str] = Field(title="Achievement", default=None)
     points: Optional[int] = Field(title="Achievement", default=None)
