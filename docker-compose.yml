@@ -92,12 +92,18 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - "8083:8083"
+      - "8084:8084"
       - "8053:8053"
     networks:
       - default
     env_file:
       - backend/go/.env
+  go_proxy:
+    build:
+      context: backend/go_proxy
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
   mediamtx:
     build:
       context: mediamtx
