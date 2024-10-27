@@ -3,11 +3,11 @@ __all__ = ['BaseUserModel',
            'AdminModel',
            'Base', 'InterestsModel',
            'LevelModel', 'GoalsModel', 'ChallengesModel', 'UserChallModel', 'GlobalAchievementsModel', 'GAchUserModel',
-           'LocalAchievementsModel', 'Base']
+            'Base']
 
 from .models import BaseUserModel, \
     UserModel, \
     AdminModel, \
     Base, \
-    InterestsModel, LocalAchievementsModel, LevelModel, GoalsModel, ChallengesModel, UserChallModel, \
+    InterestsModel, LevelModel, GoalsModel, ChallengesModel, UserChallModel, \
     GlobalAchievementsModel, GAchUserModel, Base

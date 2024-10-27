@@ -7,6 +7,7 @@ from api.interests.routers import router as api_interests_router
 from api.leves.routers import router as api_levels_router
 from api.challenges.routers import router as api_challenges_router
 from api.goals.routers import router as api_goals_router
+from api.statuses.routers import router as api_statues_router
 
 from config import ORIGINS, MEDIA_FOLDER
 
@@ -39,6 +40,7 @@ app.include_router(api_interests_router)
 app.include_router(api_levels_router)
 app.include_router(api_challenges_router)
 app.include_router(api_goals_router)
+app.include_router(api_statues_router)
 
 app.mount("/media", StaticFiles(directory=MEDIA_FOLDER, check_dir=True))
 

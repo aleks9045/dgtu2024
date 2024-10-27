@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
@@ -7,12 +5,12 @@ from sqlalchemy import update, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, ChallengesByEmailsSchema, \
-    ChallengesIdSchema, AchievementsIdSchema
-from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery, ChallengesSelectQuery
+from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, ChallengesIdSchema, \
+    AchievementsAddSchema
+from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery
 from database import db_session
 from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel, GAchUserModel
-from querys import SelectQuery
+from querys import SelectQuery, DeleteQuery
 from veryfication import verify_token
 
 router = APIRouter(
@@ -65,31 +63,40 @@ async def get_challenges_by_user(schema: ChallengesIdSchema,
                                                                              ))
 
 
-@router.get('/all', summary="Get all challenges")
-async def get_all_challenges(session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+@router.get('/all', summary="Get all challenge")
+async def get_all_challenge(session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
     return JSONResponse(status_code=200,
                         content=await SelectQuery.join_two(ChallengesModel, GlobalAchievementsModel, 1 == 1,
                                                            ChallengesModel.id_ch, GlobalAchievementsModel.id_gach,
                                                            session))
 
 
-@router.post('/', summary="Post challenges")
-async def create_challenges(schema: ChallengeCreateSchema,
-                            payload: dict = Depends(verify_token),
-                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+@router.post('/', summary="Post challenge")
+async def create_challenge(schema: ChallengeCreateSchema,
+                           payload: dict = Depends(verify_token),
+                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
     await ChallengesInsertQuery.insert(ChallengesModel, schema, session)
     await ChallengesInsertQuery.insert(GlobalAchievementsModel, schema, session)
     return Response(status_code=201)
 
 
-@router.patch('/', summary="Patch challenges")
-async def patch_challenges(schema: ChallengePatchSchema,
-                           payload: dict = Depends(verify_token),
-                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+@router.patch('/', summary="Patch challenge")
+async def patch_challenge(schema: ChallengePatchSchema,
+                          payload: dict = Depends(verify_token),
+                          session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
     new_data = await ChallengesUpdateQuery.merge_new_n_old(schema, session)
     await ChallengesUpdateQuery.update_challenges(new_data, session)
+    return Response(status_code=200)
+
+
+@router.delete('/', summary="Delete challenge")
+async def delete_challenge(schema: ChallengesIdSchema,
+                           payload: dict = Depends(verify_token),
+                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+    schema = schema.model_dump()
+    await DeleteQuery.delete(ChallengesModel, ChallengesModel.id_ch == schema["id_ch"], session)
     return Response(status_code=200)
 
 
@@ -103,7 +110,7 @@ async def add_user(schema: ChallengesIdSchema,
 
 
 @router.post('/add_achievement', summary="Add user to achievement")
-async def add_achievement(schema: AchievementsIdSchema,
+async def add_achievement(schema: AchievementsAddSchema,
                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
 
@@ -115,27 +122,3 @@ async def add_achievement(schema: AchievementsIdSchema,
     await session.execute(update(UserModel).where(UserModel.id_u == schema["id_u"]).values(
         points=bindparam("points")), points)
     return Response(status_code=200)
-
-
-@router.post('/by_emails', summary="Get challenges by emails")
-async def get_challenges_by_emails(schema: List[ChallengesByEmailsSchema],
-                                   session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    res_dct = {}
-    for s in schema:
-        res_dct[s.email] = await SelectQuery.join_four(session, ChallengesModel, UserChallModel,
-                                                                             UserModel, BaseUserModel,
-                                                                             BaseUserModel.email == s.email,
-
-                                                                             UserChallModel.id_ch,
-                                                                             ChallengesModel.id_ch,
-
-                                                                             UserModel.id_u,
-                                                                             UserChallModel.id_u,
-
-                                                                             BaseUserModel.id_bu,
-                                                                             UserModel.base_user,
-
-                                                                             columns1=ChallengesModel.public_columns
-                                                                             )
-
-    return JSONResponse(status_code=200, content=res_dct)

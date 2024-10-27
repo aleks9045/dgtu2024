@@ -76,15 +76,6 @@ class GoalsModel(Base):
     public_columns = (id_g, name, desc, start, end, status, steps, sleep_millis)
 
 
-class LocalAchievementsModel(Base):
-    __tablename__ = "local_achievements"
-
-    id_lach: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
-    title: Mapped[str] = Column(VARCHAR(32), nullable=False)
-    id_u: Mapped[int] = Column(Integer, ForeignKey('goals.id_g'), nullable=False)
-
-    public_column = (id_lach, title)
-
 
 class LevelModel(Base):
     __tablename__ = "level"
@@ -105,8 +96,8 @@ class GlobalAchievementsModel(Base):
 class GAchUserModel(Base):
     __tablename__ = 'gach_user'
     id_uach: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
-    id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u'), nullable=False)
-    id_gach: Mapped[int] = Column(Integer, ForeignKey('global_achievements.id_gach'), nullable=False)
+    id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), nullable=False)
+    id_gach: Mapped[int] = Column(Integer, ForeignKey('global_achievements.id_gach', ondelete="CASCADE"), nullable=False)
 
 
 class ChallengesModel(Base):
@@ -131,5 +122,5 @@ class ChallengesModel(Base):
 class UserChallModel(Base):
     __tablename__ = 'user_chall'
     id_chu: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
-    id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u'), nullable=False)
-    id_ch: Mapped[int] = Column(Integer, ForeignKey('challenges.id_ch'), nullable=False)
+    id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), nullable=False)
+    id_ch: Mapped[int] = Column(Integer, ForeignKey('challenges.id_ch', ondelete="CASCADE"), nullable=False)

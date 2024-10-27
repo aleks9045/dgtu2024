@@ -25,11 +25,11 @@ class GoalsPatchSchema(BaseModel):
     steps: int = Field(default=None)
     sleep_millis: int = Field(default=None)
 
-class GoalsByEmailsSchema(BaseModel):
-    email: str
-
 class GoalsOrChallengesPatchSchema(BaseModel):
     id: int
     status: Optional[str] = Field(default=None)
     challenges: bool
     goals: bool
+
+class GoalsIdSchema(BaseModel):
+    id_g: int

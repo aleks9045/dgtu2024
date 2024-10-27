@@ -38,12 +38,9 @@ class ChallengePatchSchema(BaseModel):
     points: Optional[int] = Field(title="Achievement", default=None)
 
 
-class ChallengesByEmailsSchema(BaseModel):
-    email: str
-
 class ChallengesIdSchema(BaseModel):
     id_ch: int
 
-class AchievementsIdSchema(BaseModel):
+class AchievementsAddSchema(BaseModel):
     id_u: int
     id_gach: int
