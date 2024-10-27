@@ -24,7 +24,7 @@ class LevelsSelectQuery(SelectQuery):
         result = await session.execute((
             select(*BaseUserModel.public_columns,
                    *UserModel.public_columns,
-                   func.max(LevelModel.id_l).label("level")).select_from(BaseUserModel)
+                   func.max(LevelModel.id_l)).select_from(BaseUserModel)
             .join(
                 UserModel, BaseUserModel.id_bu == UserModel.base_user)
             .join(
@@ -35,4 +35,5 @@ class LevelsSelectQuery(SelectQuery):
         ))
         col_names = tuple([*result._metadata.keys])
         data = tuple(result.all())
+        print(data)
         return await cls.make_list_of_dicts(data, col_names)
