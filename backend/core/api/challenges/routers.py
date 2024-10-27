@@ -92,10 +92,9 @@ async def patch_challenge(schema: ChallengePatchSchema,
 
 
 @router.delete('/', summary="Delete challenge")
-async def delete_challenge(schema: ChallengesIdSchema,
+async def delete_challenge(id_ch: int,
                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    schema = schema.model_dump()
-    await DeleteQuery.delete(ChallengesModel, ChallengesModel.id_ch == schema["id_ch"], session)
+    await DeleteQuery.delete(ChallengesModel, ChallengesModel.id_ch == id_ch, session)
     return Response(status_code=200)
 
 
