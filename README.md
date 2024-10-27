@@ -1,4 +1,5 @@
-# Some startup instructions
+# Backend on FastAPI
+## Some startup instructions
 
 ### Auth .env and .env_prod must be in backend/authorization/
 
@@ -9,23 +10,15 @@ POSTGRES_PASSWORD=password
 HOST=localhost OR postgres
 PORT="5432"
 
-REDIS_PASSWORD=password
-REDIS_PORT=6379
-REDIS_DATABASES=1
-
 SECRET_JWT_REFRESH="secret key"
 SECRET_JWT_ACCESS="secret key"
 JWT_ALGORITHM="HS256"
 
-MAIL_USERNAME="email@gmail.com"
-MAIL_PASSWORD="password"
-MAIL_FROM="email@email.com"
-
 ORIGINS="*"
 
-MEDIA_FOLDER="media"
+MEDIA_FOLDER="media" OR "authorization/media"
 ```
-### Alembic .env and .env_prod must be in backend/alembic/
+### Alembic .env must be in backend/alembic/
 ```
 POSTGRES_USER=postgres
 POSTGRES_DB=postgres
@@ -33,7 +26,31 @@ POSTGRES_PASSWORD=password
 HOST=localhost OR postgres
 PORT="5432"
 ```
+### Core .env and .env_prod must be in backend/core/
 
+```
+POSTGRES_USER=postgres
+POSTGRES_DB=postgres
+POSTGRES_PASSWORD=password
+HOST=localhost OR postgres
+PORT="5432"
+
+ORIGINS="*"
+```
+### Go .env and .env_prod must be in backend/go/
+
+```
+CLIENT_ID="secret"
+CLIENT_SECRET="secret"
+```
+### Postgres .env and .env_prod must be in postgres/
+```
+POSTGRES_USER=postgres
+POSTGRES_DB=postgres
+POSTGRES_PASSWORD=password
+HOST=postgres
+PORT="5432"
+```
 ### Launch for local development
 #### Run migrations(a working database is required)
 ```
@@ -65,10 +82,28 @@ python -m venv venv
 .\venv\Scripts\activate
 ```
 ```
+pip install -r .\requirements.txt
+```
+```
 python main.py
 ```
-
-## Launch in docker(requred: docker v25 or higher and docker-compose v2.29.6 or higher)
+### Run core service
+```
+cd backend/core/
+```
+```
+python -m venv venv
+```
+```
+.\venv\Scripts\activate
+```
+```
+pip install -r .\requirements.txt
+```
+```
+python main.py
+```
+## Launch in docker (requred: docker v25 or higher and docker-compose v2.29.6 or higher)
 
 ```
 docker-compose up --build
