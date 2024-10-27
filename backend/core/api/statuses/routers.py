@@ -67,7 +67,6 @@ async def get_goals_by_emails(schema: List[GoalsByEmailsSchema],
 async def goals_or_challenges(schema: GoalsOrChallengesPatchSchema,
                               session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    print(schema)
     if schema["goals"]:
         await session.execute(
             update(GoalsModel).where(GoalsModel.id_g == schema["id"]).values(status=schema["status"]))

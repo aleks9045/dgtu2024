@@ -108,6 +108,8 @@ class ChallengesModel(Base):
     start: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False)
     end: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False)
     type: Mapped[str] = Column(VARCHAR, nullable=False)
+
+    status: Mapped[str] = Column(VARCHAR, nullable=True)
     interest: Mapped[str] = Column(VARCHAR, nullable=False)
     accepted: Mapped[bool] = Column(BOOLEAN, nullable=False)
     creator: Mapped[str] = Column(VARCHAR, nullable=False)
