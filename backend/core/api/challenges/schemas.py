@@ -16,6 +16,7 @@ class ChallengeCreateSchema(BaseModel):
     type: Optional[str]
     steps: int = Field(default=None)
     sleep_millis: int = Field(default=None)
+    stream_url: str = Field(default=None)
     title: str = Field(title="Achievement")
     points: int = Field(title="Achievement")
 
@@ -32,6 +33,7 @@ class ChallengePatchSchema(BaseModel):
     type: Optional[str] = Field(default=None)
     steps: int = Field(default=None)
     sleep_millis: int = Field(default=None)
+    stream_url: str = Field(default=None)
     title: Optional[str] = Field(title="Achievement", default=None)
     points: Optional[int] = Field(title="Achievement", default=None)
 

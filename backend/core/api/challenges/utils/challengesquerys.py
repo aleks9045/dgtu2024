@@ -27,12 +27,18 @@ class ChallengesSelectQuery(SelectQuery):
         u_data = await SelectQuery.select(UserModel.id_u, UserModel.base_user == int(bu_data["id_bu"]), session)
         return int(u_data["id_u"])
 
+    @classmethod
+    async def get_points(cls, payload: dict, session: AsyncSession) -> int:
+        bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
+        u_data = await SelectQuery.select(UserModel.points, UserModel.base_user == int(bu_data["id_bu"]), session)
+        return int(u_data["points"])
+
 
 class ChallengesInsertQuery(BaseQuery):
     @classmethod
     async def insert_with_payload(cls, model: Base, schema: dict[str, Any], payload: dict, session: AsyncSession):
         schema["id_u"] = await ChallengesSelectQuery.get_id_u(payload, session)
-        return await session.execute(insert(model).returning(model), await BaseQuery.make_one_dict_from_schema(model, schema))
+        return await session.execute(insert(model), await BaseQuery.make_one_dict_from_schema(model, schema))
 
     @classmethod
     async def insert(cls, model: Base, schema: dict[str, Any], session: AsyncSession):

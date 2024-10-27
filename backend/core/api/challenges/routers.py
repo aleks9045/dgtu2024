@@ -3,12 +3,13 @@ from typing import List
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
+from sqlalchemy import update, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
 from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, ChallengesByEmailsSchema, \
     ChallengesIdSchema, AchievementsIdSchema
-from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery
+from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery, ChallengesSelectQuery
 from database import db_session
 from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel, GAchUserModel
 from querys import SelectQuery
@@ -16,7 +17,7 @@ from veryfication import verify_token
 
 router = APIRouter(
     prefix="/challenges",
-    tags=["Challenges"]
+    tags=["Challenges and achievements"]
 )
 
 
@@ -97,9 +98,14 @@ async def add_achievement(schema: AchievementsIdSchema,
                           payload: dict = Depends(verify_token),
                           session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    id_gach = await ChallengesInsertQuery.insert_with_payload(GAchUserModel, schema, payload, session)
-    id_gach = id_gach.scalars().one()
-    print(id_gach.id_uach)
+
+    await ChallengesInsertQuery.insert_with_payload(GAchUserModel, schema, payload, session)
+    points = await SelectQuery.select(GlobalAchievementsModel.points, GlobalAchievementsModel.id_gach == schema["id_gach"], session)
+    id_u = await ChallengesSelectQuery.get_id_u(payload, session)
+    old_points = await SelectQuery.select(UserModel.points, UserModel.id_u == id_u, session)
+    points["points"] += old_points["points"]
+    await session.execute(update(UserModel).where(UserModel.id_u == id_u).values(
+                points=bindparam("points")), points)
     return Response(status_code=200)
 
 
