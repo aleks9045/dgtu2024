@@ -3,6 +3,7 @@ from typing import List
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
+from select import select
 from sqlalchemy import update, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
@@ -12,7 +13,7 @@ from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, 
 from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery, ChallengesSelectQuery
 from database import db_session
 from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel, GAchUserModel
-from querys import SelectQuery
+from querys import SelectQuery, BaseQuery
 from veryfication import verify_token
 
 router = APIRouter(
@@ -23,7 +24,7 @@ router = APIRouter(
 
 @router.get('/by_user', summary="Get challenges by user")
 async def get_challenges_by_user(payload: dict = Depends(verify_token),
-                         session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+                                 session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
     bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
     return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
                                                                               ChallengesModel, UserChallModel,
@@ -39,27 +40,20 @@ async def get_challenges_by_user(payload: dict = Depends(verify_token),
 
                                                                               columns1=ChallengesModel.public_columns
                                                                               ))
+
+
 @router.post('/users_by_challenges', summary="Get users by challenges")
 async def get_challenges_by_user(schema: ChallengesIdSchema,
-        payload: dict = Depends(verify_token),
-                         session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+                                 payload: dict = Depends(verify_token),
+                                 session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
     result = await session.execute(
-        select(*BaseUserModel.public_columns, *UserModel.public_columns).select_from(ChallengesModel).where(ChallengesModel.id_ch == s).join(model2, col1 == col2).join(
-            model3,
-            col2_2 == col2_3))
-    return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
-                                                                              ChallengesModel, UserChallModel,
-                                                                              UserModel,
-                                                                              ChallengesModel.id_ch == schema.id_ch,
-
-                                                                              ChallengesModel.id_ch,
-                                                                              UserChallModel.id_ch,
-
-                                                                              UserChallModel.id_u,
-                                                                              UserModel.id_u,
-
-                                                                              columns3=UserModel.public_columns
-                                                                              ))
+        select(*BaseUserModel.public_columns, *UserModel.public_columns).select_from(ChallengesModel).where(
+            ChallengesModel.id_ch == schema["id_ch"]).join(UserChallModel, ChallengesModel.id_ch == UserChallModel.id_ch).join(
+            UserModel,
+            UserChallModel.id_u == UserModel.id_u).join(BaseUserModel, UserModel.base_user == BaseUserModel.id_bu))
+    col_names = tuple([*result._metadata.keys])
+    data = tuple(result.fetchall())
+    return JSONResponse(status_code=200, content=await BaseQuery.make_list_of_dicts(data, col_names))
 
 
 @router.get('/all', summary="Get all challenges")
@@ -89,6 +83,7 @@ async def patch_challenges(schema: ChallengePatchSchema,
     await ChallengesUpdateQuery.update_challenges(new_data, session)
     return Response(status_code=200)
 
+
 @router.post('/add_user', summary="Add user to challenge")
 async def add_user(schema: ChallengesIdSchema,
                    payload: dict = Depends(verify_token),
@@ -97,6 +92,7 @@ async def add_user(schema: ChallengesIdSchema,
     await ChallengesInsertQuery.insert_with_payload(UserChallModel, schema, payload, session)
     return Response(status_code=200)
 
+
 @router.post('/add_achievement', summary="Add user to achievement")
 async def add_achievement(schema: AchievementsIdSchema,
                           payload: dict = Depends(verify_token),
@@ -104,18 +100,19 @@ async def add_achievement(schema: AchievementsIdSchema,
     schema = schema.model_dump()
 
     await ChallengesInsertQuery.insert_with_payload(GAchUserModel, schema, payload, session)
-    points = await SelectQuery.select(GlobalAchievementsModel.points, GlobalAchievementsModel.id_gach == schema["id_gach"], session)
+    points = await SelectQuery.select(GlobalAchievementsModel.points,
+                                      GlobalAchievementsModel.id_gach == schema["id_gach"], session)
     id_u = await ChallengesSelectQuery.get_id_u(payload, session)
     old_points = await SelectQuery.select(UserModel.points, UserModel.id_u == id_u, session)
     points["points"] += old_points["points"]
     await session.execute(update(UserModel).where(UserModel.id_u == id_u).values(
-                points=bindparam("points")), points)
+        points=bindparam("points")), points)
     return Response(status_code=200)
 
 
 @router.post('/by_emails', summary="Get challenges by emails")
 async def get_challenges_by_emails(schema: List[ChallengesByEmailsSchema],
-                            session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+                                   session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     for s in schema:
         print(s.email)
     return Response(status_code=200)
