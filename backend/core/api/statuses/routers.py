@@ -3,12 +3,12 @@ from typing import List
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
-from sqlalchemy import update, bindparam
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
 from api.statuses.schemas import ChallengesByEmailsSchema, GoalsStatusPatchSchema
-from api.statuses.schemas import GoalsByEmailsSchema, GoalsOrChallengesPatchSchema
+from api.statuses.schemas import GoalsByEmailsSchema
 from database import db_session
 from models import BaseUserModel, UserModel, GoalsModel, ChallengesModel, UserChallModel
 from querys import SelectQuery
@@ -65,7 +65,7 @@ async def get_goals_by_emails(schema: List[GoalsByEmailsSchema],
 
 @router.patch('/', summary="Patch goals status")
 async def goals_status(schema: GoalsStatusPatchSchema,
-                              session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
+                       session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
     await session.execute(
         update(GoalsModel).where(GoalsModel.id_g == schema["id"]).values(status=schema["status"]))
