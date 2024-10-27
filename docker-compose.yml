@@ -91,50 +91,50 @@ services:
 #      - default
 #    env_file:
 #      - backend/go/.env
-#  mediamtx:
-#    build:
-#      context: mediamtx
-#      dockerfile: Dockerfile
-#    environment:
-#      - MTX_PROTOCOLS=udp
-#      - MTX_WEBRTCADDITIONALHOSTS=89.46.131.17
-#    ports:
-#      - "8554:8554"
-#      - "1935:1935"
-#      - "8888:8888"
-#      - "8889:8889"
-#      - "8189:8189/udp"
-#      - "9997:9997"
-#    volumes:
-#      - ./mediamtx/mediamtx.yml:/mediamtx.yml
-#      - ./mediamtx/private.key:/private.key
-#      - ./mediamtx/certificate.crt:/certificate.crt
-#    restart: unless-stopped
-#    networks:
-#      - media_network
-#    depends_on:
-#      coturn:
-#        condition: service_started
-#  coturn:
-#    image: instrumentisto/coturn
-#    container_name: coturn-server
-#    ports:
-#      - "3478:3478"     # STUN/TURN port
-#      - "3478:3478/udp" # STUN/TURN port (UDP)
-#      - "5349:5349"     # TURNS (TLS) port
-#    environment:
-#      - EXTERNAL_IP=89.46.131.17
-#    command:
-#      - turnserver
-#      - --no-auth
-#      - --realm=example.com
-#      - --no-dtls
-#      - --no-tls
-#      - --log-file=/var/log/turnserver.log
-#      - --verbose
-#
-#    networks:
-#      - media_network
+  mediamtx:
+    build:
+      context: mediamtx
+      dockerfile: Dockerfile
+    environment:
+      - MTX_PROTOCOLS=udp
+      - MTX_WEBRTCADDITIONALHOSTS=89.46.131.17
+    ports:
+      - "8554:8554"
+      - "1935:1935"
+      - "8888:8888"
+      - "8889:8889"
+      - "8189:8189/udp"
+      - "9997:9997"
+    volumes:
+      - ./mediamtx/mediamtx.yml:/mediamtx.yml
+      - ./mediamtx/private.key:/private.key
+      - ./mediamtx/certificate.crt:/certificate.crt
+    restart: unless-stopped
+    networks:
+      - media_network
+    depends_on:
+      coturn:
+        condition: service_started
+  coturn:
+    image: instrumentisto/coturn
+    container_name: coturn-server
+    ports:
+      - "3478:3478"     # STUN/TURN port
+      - "3478:3478/udp" # STUN/TURN port (UDP)
+      - "5349:5349"     # TURNS (TLS) port
+    environment:
+      - EXTERNAL_IP=89.46.131.17
+    command:
+      - turnserver
+      - --no-auth
+      - --realm=example.com
+      - --no-dtls
+      - --no-tls
+      - --log-file=/var/log/turnserver.log
+      - --verbose
+
+    networks:
+      - media_network
 
 
 volumes:
@@ -144,6 +144,6 @@ networks:
   default:
     driver: bridge
     name: network
-#  media_network:
-#    driver: bridge
+  media_network:
+    driver: bridge
 
