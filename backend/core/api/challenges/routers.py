@@ -43,6 +43,10 @@ async def get_challenges_by_user(payload: dict = Depends(verify_token),
 async def get_challenges_by_user(schema: ChallengesIdSchema,
         payload: dict = Depends(verify_token),
                          session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+    result = await session.execute(
+        select(*BaseUserModel.public_columns, *UserModel.public_columns).select_from(ChallengesModel).where(ChallengesModel.id_ch == s).join(model2, col1 == col2).join(
+            model3,
+            col2_2 == col2_3))
     return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
                                                                               ChallengesModel, UserChallModel,
                                                                               UserModel,

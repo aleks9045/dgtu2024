@@ -27,7 +27,7 @@ class ChallengePatchSchema(BaseModel):
     desc: Optional[str] = Field(default=None)
     start: Optional[datetime] = Field(default=None)
     end: Optional[datetime] = Field(default=None)
-    accepted: Optional[bool] = Field(default=False)
+    accepted: Optional[bool] = Field(default=None)
     interest: Optional[str] = Field(default=None)
     creator: Optional[str] = Field(default=None)
     type: Optional[str] = Field(default=None)
