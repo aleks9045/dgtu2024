@@ -73,7 +73,7 @@ class GoalsModel(Base):
     sleep_millis: Mapped[int] = Column(BigInteger, nullable=True)
     id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), nullable=False)
 
-    public_columns = (id_g, name, desc, start, end, status)
+    public_columns = (id_g, name, desc, start, end, status, steps, sleep_millis)
 
 
 class LocalAchievementsModel(Base):

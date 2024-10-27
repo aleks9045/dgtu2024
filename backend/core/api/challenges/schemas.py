@@ -45,4 +45,5 @@ class ChallengesIdSchema(BaseModel):
     id_ch: int
 
 class AchievementsIdSchema(BaseModel):
+    id_u: int
     id_gach: int
