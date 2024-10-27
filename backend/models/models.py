@@ -120,7 +120,7 @@ class ChallengesModel(Base):
     interest: Mapped[str] = Column(VARCHAR, nullable=False)
     accepted: Mapped[bool] = Column(BOOLEAN, nullable=False)
     creator: Mapped[str] = Column(VARCHAR, nullable=False)
-    stream_url: Mapped[str] = Column(VARCHAR, nullable=True)
+    streaming_now: Mapped[bool] = Column(BOOLEAN, nullable=True)
 
     steps: Mapped[int] = Column(Integer, nullable=True)
     sleep_millis: Mapped[int] = Column(BigInteger, nullable=True)
