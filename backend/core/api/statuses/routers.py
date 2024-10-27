@@ -7,7 +7,7 @@ from sqlalchemy import update, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from api.statuses.schemas import ChallengesByEmailsSchema
+from api.statuses.schemas import ChallengesByEmailsSchema, GoalsStatusPatchSchema
 from api.statuses.schemas import GoalsByEmailsSchema, GoalsOrChallengesPatchSchema
 from database import db_session
 from models import BaseUserModel, UserModel, GoalsModel, ChallengesModel, UserChallModel
@@ -63,14 +63,11 @@ async def get_goals_by_emails(schema: List[GoalsByEmailsSchema],
     return JSONResponse(status_code=200, content=res_dct)
 
 
-@router.patch('/', summary="Patch goals or challenges")
-async def goals_or_challenges(schema: GoalsOrChallengesPatchSchema,
+@router.patch('/', summary="Patch goals status")
+async def goals_status(schema: GoalsStatusPatchSchema,
                               session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
     schema = schema.model_dump()
-    if schema["goals"]:
-        await session.execute(
-            update(GoalsModel).where(GoalsModel.id_g == schema["id"]).values(status=schema["status"]))
-    elif schema["challenges"]:
-        await session.execute(
-            update(ChallengesModel).where(ChallengesModel.id_ch == schema["id"]).values(status=schema["status"]))
+    await session.execute(
+        update(GoalsModel).where(GoalsModel.id_g == schema["id"]).values(status=schema["status"]))
+
     return Response(status_code=200)

@@ -11,8 +11,6 @@ class GoalsByEmailsSchema(BaseModel):
     email: str
 
 
-class GoalsOrChallengesPatchSchema(BaseModel):
+class GoalsStatusPatchSchema(BaseModel):
     id: int
     status: Optional[str] = Field(default=None)
-    challenges: bool
-    goals: bool

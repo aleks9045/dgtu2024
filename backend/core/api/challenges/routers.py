@@ -121,6 +121,7 @@ async def add_achievement(schema: AchievementsAddSchema,
         points=bindparam("points")), points)
     return Response(status_code=200)
 
+
 @router.get('/achievement', summary="get_achievement")
 async def add_achievement(payload: dict = Depends(verify_token),
                           session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
