@@ -90,7 +90,7 @@ class GlobalAchievementsModel(Base):
     title: Mapped[str] = Column(VARCHAR, nullable=False)
     points: Mapped[int] = Column(Integer, nullable=False)
 
-    public_colums = (id_gach, title, points)
+    public_columns = (id_gach, title, points)
 
 
 class GAchUserModel(Base):
