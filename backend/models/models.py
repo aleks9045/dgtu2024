@@ -69,11 +69,12 @@ class GoalsModel(Base):
     start: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False)
     end: Mapped[datetime] = Column(TIMESTAMP(timezone=True), nullable=False)
     status: Mapped[str] = Column(VARCHAR, nullable=True)
+    type: Mapped[str] = Column(VARCHAR, nullable=True)
     steps: Mapped[int] = Column(Integer, nullable=True)
     sleep_millis: Mapped[int] = Column(BigInteger, nullable=True)
     id_u: Mapped[int] = Column(Integer, ForeignKey('user.id_u', ondelete="CASCADE"), nullable=False)
 
-    public_columns = (id_g, name, desc, start, end, status, steps, sleep_millis)
+    public_columns = (id_g, name, desc, start, end, type, status, steps, sleep_millis)
 
 
 
