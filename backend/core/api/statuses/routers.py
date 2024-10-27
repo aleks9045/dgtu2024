@@ -37,7 +37,9 @@ async def get_challenges_by_emails(schema: List[ChallengesByEmailsSchema],
                                                        BaseUserModel.id_bu,
                                                        UserModel.base_user,
 
-                                                       columns1=ChallengesModel.public_columns
+                                                       columns1=ChallengesModel.public_columns,
+                                                       columns2=UserModel.public_columns
+
                                                        )
 
     return JSONResponse(status_code=200, content=res_dct)
@@ -57,7 +59,8 @@ async def get_goals_by_emails(schema: List[GoalsByEmailsSchema],
                                                         UserModel.base_user,
                                                         BaseUserModel.id_bu,
 
-                                                        columns1=GoalsModel.public_columns
+                                                        columns1=GoalsModel.public_columns,
+                                                        columns2=UserModel.public_columns
                                                         )
 
     return JSONResponse(status_code=200, content=res_dct)
