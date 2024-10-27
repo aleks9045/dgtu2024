@@ -1,155 +1,155 @@
 services:
-  frontend:
-    build:
-      context: autumn2024
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-
-        #  alembic:
-#    container_name: alembic
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
+#  frontend:
 #    build:
-#      context: ./backend
-#      dockerfile: alembic.Dockerfile
-#    command:
-#      /bin/sh -c "alembic revision --autogenerate -m "initial" &&
-#      alembic upgrade head && python initializations.py"
-#    volumes:
-#      - ./backend/alembic/db_migrations/versions:/alembic/db_migrations/versions
-#    networks:
-#      - default
-#
-#  authorization:
-#    container_name: authorization
-#    depends_on:
-#      alembic:
-#        condition: service_completed_successfully
-#      postgres:
-#        condition: service_healthy
-#    build:
-#      context: ./backend
-#      dockerfile: auth.Dockerfile
-#    ports:
-#      - "8000:8000"
-#    command:
-#       python3 authorization/main.py
-#    env_file:
-#      - backend/authorization/.env_prod
-#    volumes:
-#      - ./backend/authorization/media:/backend/authorization/media
-#    networks:
-#      - default
-#  core:
-#    container_name: core
-#    depends_on:
-#      alembic:
-#        condition: service_completed_successfully
-#      postgres:
-#        condition: service_healthy
-#    build:
-#      context: ./backend
-#      dockerfile: core.Dockerfile
-#    ports:
-#      - "8001:8001"
-#    command:
-#       python3 core/main.py
-#    env_file:
-#      - backend/core/.env_prod
-#    volumes:
-#      - ./backend/core/media:/backend/main/media
-#    networks:
-#      - default
-#  postgres:
-#    build:
-#      context: ./postgres
-#      dockerfile: postgres.Dockerfile
-#    container_name: postgres
-#    env_file:
-#      - postgres/.env
-#    volumes:
-#      - pgdata:/var/lib/postgresql/data
-#    ports:
-#      - "5432:5432"
-#    healthcheck:
-#      test: ["CMD-SHELL", "pg_isready -U postgres"]
-#      interval: 30s
-#      timeout: 3s
-#      retries: 3
-#      start_period: 7s
-#      start_interval: 1s
-#    restart: always
-#    networks:
-#      - default
-#  go:
-#    build:
-#      context: ./backend/go
-#      dockerfile: go.Dockerfile
-#    container_name: go
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#    ports:
-#      - "8083:8083"
-#      - "8053:8053"
-#    networks:
-#      - default
-#    env_file:
-#      - backend/go/.env
-#  mediamtx:
-#    build:
-#      context: mediamtx
+#      context: autumn2024
 #      dockerfile: Dockerfile
-#    environment:
-#      - MTX_PROTOCOLS=udp
-#      - MTX_WEBRTCADDITIONALHOSTS=89.46.131.17
 #    ports:
-#      - "8554:8554"
-#      - "1935:1935"
-#      - "8888:8888"
-#      - "8889:8889"
-#      - "8189:8189/udp"
-#      - "9997:9997"
-#    volumes:
-#      - ./mediamtx/mediamtx.yml:/mediamtx.yml
-#      - ./mediamtx/private.key:/private.key
-#      - ./mediamtx/certificate.crt:/certificate.crt
-#    restart: unless-stopped
-#    networks:
-#      - media_network
-#    depends_on:
-#      coturn:
-#        condition: service_started
-#  coturn:
-#    image: instrumentisto/coturn
-#    container_name: coturn-server
-#    ports:
-#      - "3478:3478"     # STUN/TURN port
-#      - "3478:3478/udp" # STUN/TURN port (UDP)
-#      - "5349:5349"     # TURNS (TLS) port
-#    environment:
-#      - EXTERNAL_IP=89.46.131.17
-#    command:
-#      - turnserver
-#      - --no-auth
-#      - --realm=example.com
-#      - --no-dtls
-#      - --no-tls
-#      - --log-file=/var/log/turnserver.log
-#      - --verbose
-#
-#    networks:
-#      - media_network
-#
-#
-#volumes:
-#  pgdata:
-#
-#networks:
-#  default:
-#    driver: bridge
-#    name: network
-#  media_network:
-#    driver: bridge
+#      - "80:80"
+
+  alembic:
+    container_name: alembic
+    depends_on:
+      postgres:
+        condition: service_healthy
+    build:
+      context: ./backend
+      dockerfile: alembic.Dockerfile
+    command:
+      /bin/sh -c "alembic revision --autogenerate -m "initial" &&
+      alembic upgrade head && python initializations.py"
+    volumes:
+      - ./backend/alembic/db_migrations/versions:/alembic/db_migrations/versions
+    networks:
+      - default
+
+  authorization:
+    container_name: authorization
+    depends_on:
+      alembic:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    build:
+      context: ./backend
+      dockerfile: auth.Dockerfile
+    ports:
+      - "8000:8000"
+    command:
+       python3 authorization/main.py
+    env_file:
+      - backend/authorization/.env_prod
+    volumes:
+      - ./backend/authorization/media:/backend/authorization/media
+    networks:
+      - default
+  core:
+    container_name: core
+    depends_on:
+      alembic:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    build:
+      context: ./backend
+      dockerfile: core.Dockerfile
+    ports:
+      - "8001:8001"
+    command:
+       python3 core/main.py
+    env_file:
+      - backend/core/.env_prod
+    volumes:
+      - ./backend/core/media:/backend/main/media
+    networks:
+      - default
+  postgres:
+    build:
+      context: ./postgres
+      dockerfile: postgres.Dockerfile
+    container_name: postgres
+    env_file:
+      - postgres/.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 7s
+      start_interval: 1s
+    restart: always
+    networks:
+      - default
+  go:
+    build:
+      context: ./backend/go
+      dockerfile: go.Dockerfile
+    container_name: go
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+      - "8053:8053"
+    networks:
+      - default
+    env_file:
+      - backend/go/.env
+  mediamtx:
+    build:
+      context: mediamtx
+      dockerfile: Dockerfile
+    environment:
+      - MTX_PROTOCOLS=udp
+      - MTX_WEBRTCADDITIONALHOSTS=89.46.131.17
+    ports:
+      - "8554:8554"
+      - "1935:1935"
+      - "8888:8888"
+      - "8889:8889"
+      - "8189:8189/udp"
+      - "9997:9997"
+    volumes:
+      - ./mediamtx/mediamtx.yml:/mediamtx.yml
+      - ./mediamtx/private.key:/private.key
+      - ./mediamtx/certificate.crt:/certificate.crt
+    restart: unless-stopped
+    networks:
+      - media_network
+    depends_on:
+      coturn:
+        condition: service_started
+  coturn:
+    image: instrumentisto/coturn
+    container_name: coturn-server
+    ports:
+      - "3478:3478"     # STUN/TURN port
+      - "3478:3478/udp" # STUN/TURN port (UDP)
+      - "5349:5349"     # TURNS (TLS) port
+    environment:
+      - EXTERNAL_IP=89.46.131.17
+    command:
+      - turnserver
+      - --no-auth
+      - --realm=example.com
+      - --no-dtls
+      - --no-tls
+      - --log-file=/var/log/turnserver.log
+      - --verbose
+
+    networks:
+      - media_network
+
+
+volumes:
+  pgdata:
+
+networks:
+  default:
+    driver: bridge
+    name: network
+  media_network:
+    driver: bridge
