@@ -47,7 +47,7 @@ async def get_challenges_by_user(schema: ChallengesIdSchema,
                                  payload: dict = Depends(verify_token),
                                  session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
     result = await session.execute(
-        select(ChallengesModel, UserChallModel, UserModel).where(
+        select(BaseUserModel.id_bu).where(
             ChallengesModel.id_ch == schema["id_ch"]).join(UserChallModel,
                                                            ChallengesModel.id_ch == UserChallModel.id_ch).join(
             UserModel,
