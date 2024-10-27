@@ -120,3 +120,22 @@ async def add_achievement(schema: AchievementsAddSchema,
     await session.execute(update(UserModel).where(UserModel.id_u == schema["id_u"]).values(
         points=bindparam("points")), points)
     return Response(status_code=200)
+
+@router.get('/achievement', summary="get_achievement")
+async def add_achievement(payload: dict = Depends(verify_token),
+                          session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
+    bu_data = await SelectQuery.select(BaseUserModel.id_bu, BaseUserModel.uu_id == payload["sub"], session)
+    return JSONResponse(status_code=200, content=await SelectQuery.join_three(session,
+                                                                              GlobalAchievementsModel, GAchUserModel,
+                                                                              UserModel,
+                                                                              UserModel.base_user == int(
+                                                                                  bu_data["id_bu"]),
+
+                                                                              GlobalAchievementsModel.id_gach,
+                                                                              GAchUserModel.id_gach,
+
+                                                                              GAchUserModel.id_u,
+                                                                              UserModel.id_u,
+
+                                                                              columns1=GlobalAchievementsModel.public_columns
+                                                                              ))

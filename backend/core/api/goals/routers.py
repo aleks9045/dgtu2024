@@ -52,9 +52,8 @@ async def create_goals(schema: GoalsPatchSchema,
 
 
 @router.delete('/', summary="Delete goal")
-async def delete_goal(schema: GoalsIdSchema,
+async def delete_goal(id_g: int,
                       payload: dict = Depends(verify_token),
                       session: AsyncSession = Depends(db_session.get_async_session)) -> Response:
-    schema = schema.model_dump()
-    await DeleteQuery.delete(GoalsModel, GoalsModel.id_g == schema["id_ch"], session)
+    await DeleteQuery.delete(GoalsModel, GoalsModel.id_g == id_g, session)
     return Response(status_code=200)
