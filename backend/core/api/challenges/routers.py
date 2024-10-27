@@ -3,7 +3,6 @@ from typing import List
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
-from select import select
 from sqlalchemy import update, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
@@ -13,7 +12,7 @@ from api.challenges.schemas import ChallengeCreateSchema, ChallengePatchSchema, 
 from api.challenges.utils.challengesquerys import ChallengesUpdateQuery, ChallengesInsertQuery, ChallengesSelectQuery
 from database import db_session
 from models import BaseUserModel, UserModel, ChallengesModel, UserChallModel, GlobalAchievementsModel, GAchUserModel
-from querys import SelectQuery, BaseQuery
+from querys import SelectQuery
 from veryfication import verify_token
 
 router = APIRouter(
@@ -46,25 +45,24 @@ async def get_challenges_by_user(payload: dict = Depends(verify_token),
 async def get_challenges_by_user(schema: ChallengesIdSchema,
                                  payload: dict = Depends(verify_token),
                                  session: AsyncSession = Depends(db_session.get_async_session)) -> JSONResponse:
-    result = await session.execute(
-        select(
-            ChallengesModel,
-            UserChallModel,
-            UserModel,
-            BaseUserModel
-        ).where(
-            ChallengesModel.id_ch == schema["id_ch"]
-        ).join(
-            UserChallModel, ChallengesModel.id_ch == UserChallModel.id_ch
-        ).join(
-            UserModel, UserChallModel.id_u == UserModel.id_u
-        ).join(
-            BaseUserModel, UserModel.base_user == BaseUserModel.id_bu
-        ).add_columns(
-            *BaseUserModel.public_columns, *UserModel.public_columns))
-    col_names = tuple([*result._metadata.keys])
-    data = tuple(result.fetchall())
-    return JSONResponse(status_code=200, content=await BaseQuery.make_list_of_dicts(data, col_names))
+    schema = schema.model_dump()
+    return JSONResponse(status_code=200, content=await SelectQuery.join_four(session,
+                                                                             ChallengesModel, UserChallModel,
+                                                                             UserModel, BaseUserModel,
+                                                                             ChallengesModel.id_ch == schema["id_ch"],
+
+                                                                             UserChallModel.id_ch,
+                                                                             ChallengesModel.id_ch,
+
+                                                                             UserModel.id_u,
+                                                                             UserChallModel.id_u,
+
+                                                                             BaseUserModel.id_bu,
+                                                                             UserModel.base_user,
+
+                                                                             columns3=UserModel.public_columns,
+                                                                             columns4=BaseUserModel.public_columns
+                                                                             ))
 
 
 @router.get('/all', summary="Get all challenges")

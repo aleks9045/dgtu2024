@@ -110,6 +110,29 @@ class SelectQuery(BaseQuery):
         return await cls.make_list_of_dicts(data, col_names)
 
     @classmethod
+    async def join_four(cls, session: AsyncSession,
+                         model1: Base, model2: Base, model3: Base, model4: Base,
+                         condition: bool,
+
+                         col1: Union[InstrumentedAttribute, Any],
+                         col2: Union[InstrumentedAttribute, Any],
+
+                         col2_2: Union[InstrumentedAttribute, Any],
+                         col2_3: Union[InstrumentedAttribute, Any],
+
+                         col3_3: Union[InstrumentedAttribute, Any],
+                         col4_4: Union[InstrumentedAttribute, Any],
+                         columns1: tuple = (), columns2: tuple = (), columns3=(), columns4=()):
+
+        result = await session.execute(
+            select(*columns1, *columns2, *columns3, *columns4).select_from(model1).select_from(model2).where(condition).join(model2, col1 == col2).join(model3,
+                                                                                                     col2_2 == col2_3).join(model4, col3_3 == col4_4))
+
+        col_names = tuple([*result._metadata.keys])
+        data = tuple(result.fetchall())
+        return await cls.make_list_of_dicts(data, col_names)
+
+    @classmethod
     async def exists(cls, columns: Base, condition: bool, session: AsyncSession) -> bool:
         result = await session.execute(select(columns).where(condition))
 
