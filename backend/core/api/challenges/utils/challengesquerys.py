@@ -50,7 +50,7 @@ class ChallengesUpdateQuery(BaseQuery):
     @classmethod
     async def merge_new_n_old(cls, schema: dict[str, Any], session: AsyncSession) -> Dict[str, str]:
         old_data = await session.execute(
-            select(*ChallengesModel.public_columns, *GlobalAchievementsModel.public_colums).where(ChallengesModel.id_ch == schema["id_ch"]).join(GlobalAchievementsModel, GlobalAchievementsModel.id_gach == ChallengesModel.id_ch))
+            select(*ChallengesModel.public_columns, *GlobalAchievementsModel.public_columns).where(ChallengesModel.id_ch == schema["id_ch"]).join(GlobalAchievementsModel, GlobalAchievementsModel.id_gach == ChallengesModel.id_ch))
         col_names = tuple([*old_data._metadata.keys])
         data = old_data.fetchone()
 
